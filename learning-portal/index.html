@@ -172,6 +172,40 @@
               </button>
             </div>
           </div>
+
+          <!-- Game Card 3: Đảo Kho Báu (8 Worlds / 80 Levels) -->
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between">
+            <div>
+              <div class="h-36 bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500 p-5 flex flex-col justify-between text-white relative overflow-hidden">
+                <div class="flex items-center justify-between z-10">
+                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-white/20 backdrop-blur-xs">Toán &amp; Coding</span>
+                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-900/25">8 Thế giới • 80 Màn</span>
+                </div>
+                <div class="flex items-center gap-3 z-10">
+                  <div class="text-3xl">🏝️</div>
+                  <div>
+                    <h2 class="font-extrabold text-lg leading-tight">Đảo Kho Báu</h2>
+                    <p class="text-xs text-amber-50">Thám hiểm, Giải Toán &amp; Robot</p>
+                  </div>
+                </div>
+              </div>
+              <div class="p-5 space-y-2">
+                <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                  Hóa thân thành nhà thám hiểm qua <strong>8 hòn đảo</strong> (80 màn): giải đố Toán học mở khóa cầu và ghép khối lệnh điều khiển Robot thu thập kho báu.
+                </p>
+                <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-2">
+                  <span>Tiến độ: <strong id="libExplorerProgressText" class="text-amber-600 dark:text-amber-400">0 / 80</strong> màn</span>
+                  <span>8 Thế giới</span>
+                </div>
+              </div>
+            </div>
+            <div class="px-5 pb-5">
+              <button id="openExplorerGameBtn" type="button" class="w-full py-2.5 px-4 rounded-xl bg-amber-500 text-slate-950 font-bold text-sm hover:bg-amber-600 transition shadow-sm flex items-center justify-center gap-2">
+                <span>Khám phá ngay</span>
+                <span>→</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -301,6 +335,99 @@
         </div>
         <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
           <iframe id="robotMazeFrame" title="Robot Mê Cung" class="w-full border-0" style="height: 78vh; min-height: 620px;"></iframe>
+        </div>
+      </div>
+
+      <!-- ACTIVE GAME VIEW 3: ĐẢO KHO BÁU (8 WORLDS x 10 LEVELS = 80 LEVELS) -->
+      <div id="explorerGameSection" class="hidden space-y-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <button id="backFromExplorerBtn" type="button" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+              ← Thư viện
+            </button>
+            <div>
+              <h2 class="font-extrabold text-lg text-slate-900 dark:text-white leading-tight">🏝️ Đảo Kho Báu — Nhà Thám Hiểm Toán &amp; Robot</h2>
+              <p id="expWorldSubtitle" class="text-xs text-slate-500 dark:text-slate-400">8 Thế giới • 80 Màn chơi</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/70 border border-amber-200 dark:border-amber-800 text-xs font-bold text-amber-700 dark:text-amber-300">
+              💎 Kho báu: <span id="expTreasureCount">0</span> / 80
+            </span>
+          </div>
+        </div>
+
+        <!-- 8 Worlds Selector -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3 shadow-xs">
+          <div id="expWorldsBar" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2"></div>
+        </div>
+
+        <!-- 10 Levels Selector for Active World -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-4 py-3 shadow-xs flex flex-wrap items-center justify-between gap-2">
+          <div id="expLevelsBar" class="flex flex-wrap items-center gap-1.5"></div>
+          <span id="expTopicBadge" class="text-xs font-semibold text-indigo-600 dark:text-indigo-400"></span>
+        </div>
+
+        <!-- Main Explorer Play Area: Left Grid Canvas + Right Math Puzzle & Block Coding -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+          <!-- Left 6 cols: Island Grid Canvas -->
+          <div class="lg:col-span-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm space-y-3">
+            <div class="flex items-center justify-between text-xs">
+              <span id="expLevelTitle" class="font-extrabold text-slate-900 dark:text-white text-sm">Màn 1</span>
+              <span id="expStatusMsg" class="font-semibold text-indigo-600 dark:text-indigo-400">Giải câu đố Toán để mở khóa cầu!</span>
+            </div>
+            <div class="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-sky-50 dark:bg-slate-950 flex items-center justify-center p-2">
+              <canvas id="explorerCanvas" width="380" height="380" class="max-w-full h-auto block rounded-xl"></canvas>
+            </div>
+          </div>
+
+          <!-- Right 6 cols: Step 1 Math/Logic Gate + Step 2 Robot Block Coding -->
+          <div class="lg:col-span-6 space-y-4">
+            <!-- Step 1: Math / Logic Puzzle -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl border-2 border-amber-300 dark:border-amber-700 p-4 shadow-sm space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-0.5 rounded-lg bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 text-xs font-extrabold uppercase">Bước 1: Giải đố mở khóa</span>
+                <span id="expMathStatusBadge" class="text-xs font-bold text-slate-400">🔒 Đang khóa</span>
+              </div>
+              <p id="expMathQuestion" class="text-sm font-bold text-slate-900 dark:text-white leading-snug"></p>
+              <div id="expMathOptions" class="grid grid-cols-2 gap-2"></div>
+            </div>
+
+            <!-- Step 2: Robot Block Coding -->
+            <div class="bg-white dark:bg-slate-900 rounded-2xl border-2 border-indigo-200 dark:border-indigo-800 p-4 shadow-sm space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="px-2.5 py-0.5 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-800 dark:text-indigo-300 text-xs font-extrabold uppercase">Bước 2: Ghép khối lệnh Robot</span>
+                <button id="expHintBtn" type="button" class="text-xs font-bold text-amber-600 dark:text-amber-400 hover:underline">💡 Gợi ý đường đi</button>
+              </div>
+
+              <!-- Block Palette -->
+              <div class="flex flex-wrap gap-1.5">
+                <button type="button" data-exp-cmd="FWD" class="px-2.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold transition">⬆️ Tiến 1 ô</button>
+                <button type="button" data-exp-cmd="LEFT" class="px-2.5 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold transition">↺ Quay Trái</button>
+                <button type="button" data-exp-cmd="RIGHT" class="px-2.5 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold transition">↻ Quay Phải</button>
+                <button type="button" data-exp-cmd="FWD2" class="px-2.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold transition">🔁 Lặp 2× Tiến</button>
+                <button type="button" data-exp-cmd="FWD3" class="px-2.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold transition">🔁 Lặp 3× Tiến</button>
+              </div>
+
+              <!-- Program Queue -->
+              <div id="expProgramQueue" class="min-h-[68px] p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 flex flex-wrap gap-1.5 items-start">
+                <span class="text-xs text-slate-400 italic">Bấm các khối lệnh ở trên để ghép...</span>
+              </div>
+
+              <!-- Run / Clear -->
+              <div class="flex flex-wrap items-center gap-2">
+                <button id="expRunBtn" type="button" class="flex-1 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm">
+                  ▶ Chạy Robot thu thập Kho báu
+                </button>
+                <button id="expClearBtn" type="button" class="px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                  Xóa lệnh
+                </button>
+                <button id="expNextBtn" type="button" class="hidden px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition">
+                  Màn tiếp →
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

@@ -164,7 +164,7 @@
           hint: 'Tách riêng Kim loại (hút nam châm), Hữu cơ (mềm phân hủy) và Giấy (dễ rách/thấm nước).',
           timeLimit: 90,
           speedMs: 500,
-          optimalSteps: 15,
+          optimalSteps: 16,
           useAttributes: true,
           hasWasher: false,
           allowNotOr: true,
@@ -193,7 +193,7 @@
           hint: 'Có rác dính bẩn (💧)! Hãy bật Trạm Rửa Sạch để rửa trước khi cho vào thùng tái chế.',
           timeLimit: 90,
           speedMs: 520,
-          optimalSteps: 13,
+          optimalSteps: 14,
           useAttributes: false,
           hasWasher: true,
           allowNotOr: false,
@@ -246,10 +246,10 @@
           id: 'lvl_9',
           title: 'Màn 9: Tối ưu Thuật toán (3 Sao ⚡)',
           modeLabel: 'Tối ưu • Đổi thứ tự trạm',
-          hint: 'Có 8 quả táo và chỉ 1 tờ báo! Dùng nút ⇆ Đổi chỗ trạm để đưa Thùng Hữu Cơ lên Trạm 1 nhằm tiết kiệm bước kiểm tra (≤ 12 bước = 3 Sao).',
+          hint: 'Có 8 quả táo và chỉ 1 tờ báo! Dùng nút ⇆ Đổi chỗ trạm để đưa Thùng Hữu Cơ lên Trạm 1 nhằm tiết kiệm bước kiểm tra (≤ 13 bước = 3 Sao).',
           timeLimit: 90,
           speedMs: 400,
-          optimalSteps: 12,
+          optimalSteps: 13,
           useAttributes: false,
           hasWasher: false,
           allowNotOr: false,
@@ -278,10 +278,10 @@
           id: 'lvl_10',
           title: 'Màn 10: Đại thử thách Tổng hợp',
           modeLabel: 'Tổng hợp • Rửa + Thuộc tính + Tối ưu',
-          hint: '6 Lon sắt chiếm đa số! Bật Trạm Rửa, đổi Trạm Kim loại lên Trạm 1 và dùng thuộc tính Nam châm để đạt 3 Sao (≤ 15 bước)!',
+          hint: '6 Lon sắt chiếm đa số! Bật Trạm Rửa, đổi Trạm Kim loại lên Trạm 1 và dùng thuộc tính Nam châm để đạt 3 Sao (≤ 16 bước)!',
           timeLimit: 90,
           speedMs: 390,
-          optimalSteps: 15,
+          optimalSteps: 16,
           useAttributes: true,
           hasWasher: true,
           allowNotOr: true,
@@ -373,8 +373,8 @@
             if (resLvl.ok) {
               const lvlData = await resLvl.json();
               if (Array.isArray(lvlData) && lvlData.length > 0) {
-                wasteLevels = lvlData;
-                safeSetStorage(LEVELS_STORAGE_KEY, wasteLevels); pushLevelsToCloud();
+                wasteLevels = syncDefaultLevels(lvlData);
+                safeSetStorage(LEVELS_STORAGE_KEY, wasteLevels);
                 renderAll();
               }
             }
@@ -427,11 +427,14 @@
       let usersDb = ensureAdminAccount(safeGetStorage(DB_STORAGE_KEY, []));
       safeSetStorage(DB_STORAGE_KEY, usersDb); pushUsersToCloud();
 
-      let wasteLevels = safeGetStorage(LEVELS_STORAGE_KEY, null);
-      if (!Array.isArray(wasteLevels) || wasteLevels.length === 0) {
-        wasteLevels = JSON.parse(JSON.stringify(DEFAULT_WASTE_LEVELS));
-        safeSetStorage(LEVELS_STORAGE_KEY, wasteLevels); pushLevelsToCloud();
+      function syncDefaultLevels(list) {
+        const arr = Array.isArray(list) ? list : [];
+        const customOnly = arr.filter(function (l) { return l && !l.isDefault; });
+        return JSON.parse(JSON.stringify(DEFAULT_WASTE_LEVELS)).concat(customOnly);
       }
+
+      let wasteLevels = syncDefaultLevels(safeGetStorage(LEVELS_STORAGE_KEY, null));
+      safeSetStorage(LEVELS_STORAGE_KEY, wasteLevels);
 
       let currentUser = safeGetStorage(SESSION_STORAGE_KEY, null);
       // Auto-restore remembered user if session was cleared
@@ -2273,6 +2276,405 @@
           showToast('Đã ngắt kết nối Cloud Sync.', 'info');
         });
 
+        // --- GAME 3: ĐẢO KHO BÁU (8 WORLDS x 10 LEVELS = 80 LEVELS) ---
+        const EXPLORER_WORLDS = [
+          { id: 0, name: 'Beginner Beach', vn: 'Bãi Biển Khởi Đầu', icon: '🏖️', topic: 'Đếm số, cộng trừ & lệnh tuần tự', bg: '#fef3c7', tileA: '#fde68a', tileB: '#fcd34d', obs: '🪨' },
+          { id: 1, name: 'Number Forest', vn: 'Rừng Con Số', icon: '🌲', topic: 'Quy luật số & vòng lặp', bg: '#dcfce7', tileA: '#bbf7d0', tileB: '#86efac', obs: '🌲' },
+          { id: 2, name: 'Geometry Valley', vn: 'Thung Lũng Hình Học', icon: '📐', topic: 'Hình học, góc & diện tích', bg: '#e0e7ff', tileA: '#c7d2fe', tileB: '#a5b4fc', obs: '⛰️' },
+          { id: 3, name: 'Logic Jungle', vn: 'Rừng Rậm Logic', icon: '🦜', topic: 'Điều kiện IF/ELSE & tư duy logic', bg: '#d1fae5', tileA: '#6ee7b7', tileB: '#34d399', obs: '🌵' },
+          { id: 4, name: 'Multiplication Mountain', vn: 'Núi Nhân Chia', icon: '🏔️', topic: 'Nhân chia & biến số', bg: '#f1f5f9', tileA: '#cbd5e1', tileB: '#94a3b8', obs: '🧊' },
+          { id: 5, name: 'Mystery Desert', vn: 'Sa Mạc Bí Ẩn', icon: '🐪', topic: 'Thuật toán, tìm kiếm & tối ưu', bg: '#ffedd5', tileA: '#fed7aa', tileB: '#fdba74', obs: '🏜️' },
+          { id: 6, name: 'Cyber Ocean', vn: 'Đại Dương Số', icon: '🌊', topic: 'Hàm, dữ liệu & debugging', bg: '#cffafe', tileA: '#a5f3fc', tileB: '#67e8f9', obs: '🪸' },
+          { id: 7, name: 'Treasure Kingdom', vn: 'Vương Quốc Kho Báu', icon: '👑', topic: 'Thử thách tổng hợp', bg: '#fae8ff', tileA: '#f5d0fe', tileB: '#e879f9', obs: '🏰' }
+        ];
+
+        function buildMathPuzzleForLevel(wIdx, lIdx) {
+          const n = lIdx + 1;
+          if (wIdx === 0) {
+            const a = 3 + n * 2, b = 2 + n;
+            const ans = a + b;
+            return { q: `Trên bãi biển có ${a} vỏ sò, nhặt thêm ${b} vỏ nữa. Tổng cộng có bao nhiêu vỏ sò?`, ans: ans, opts: [ans, ans + 2, ans - 1, ans + 3] };
+          }
+          if (wIdx === 1) {
+            const step = 2 + (n % 4);
+            const s1 = n, s2 = n + step, s3 = n + step * 2, ans = n + step * 3;
+            return { q: `Tìm số tiếp theo trong dãy quy luật: ${s1}, ${s2}, ${s3}, ?`, ans: ans, opts: [ans, ans + 1, ans - step, ans + 2] };
+          }
+          if (wIdx === 2) {
+            const w = 3 + (n % 5), h = 2 + Math.floor(n / 2);
+            const ans = w * h;
+            return { q: `Khu vườn hình chữ nhật dài ${w}m, rộng ${h}m. Diện tích khu vườn là bao nhiêu m²?`, ans: ans, opts: [ans, (w + h) * 2, ans + 4, ans - 2] };
+          }
+          if (wIdx === 3) {
+            const x = 4 + n;
+            const ans = x > 8 ? x * 2 : x + 5;
+            return { q: `NẾU x = ${x} > 8 THÌ kết quả = x × 2, NGƯỢC LẠI kết quả = x + 5. Kết quả là?`, ans: ans, opts: [ans, x * 2 + 1, x + 3, ans - 2] };
+          }
+          if (wIdx === 4) {
+            const a = 3 + (n % 6), b = 4 + Math.floor(n / 2);
+            const ans = a * b;
+            return { q: `Mỗi rương có ${a} viên ngọc. Hỏi ${b} rương có tất cả bao nhiêu viên ngọc?`, ans: ans, opts: [ans, a + b, ans + a, ans - b] };
+          }
+          if (wIdx === 5) {
+            const arr = [12 + n, 5 + n * 2, 28 + n, 9 + n];
+            const ans = Math.max.apply(null, arr);
+            return { q: `Thuật toán tìm MAX trong dãy [${arr.join(', ')}] trả về số nào?`, ans: ans, opts: [ans, Math.min.apply(null, arr), arr[0], arr[1]] };
+          }
+          if (wIdx === 6) {
+            const f = function (k) { return k * 2 + 3; };
+            const inp = 2 + n;
+            const ans = f(inp);
+            return { q: `Hàm TinhDiem(k) trả về (k × 2 + 3). Với k = ${inp}, giá trị trả về là bao nhiêu?`, ans: ans, opts: [ans, inp * 2, ans + 2, inp + 5] };
+          }
+          const base = 5 + n;
+          const ans = base * 3 - 4;
+          return { q: `Mở cổng Kho Báu: Tính giá trị biểu thức (${base} × 3) - 4 = ?`, ans: ans, opts: [ans, ans + 3, ans - 4, base * 3] };
+        }
+
+        function generateExplorerLevel(wIdx, lIdx) {
+          const size = 5;
+          // Deterministic solvable path from (4,0) to treasure at (0, 4) or varied corners
+          const templates = [
+            { start: { r: 4, c: 0, dir: 0 }, goal: { r: 1, c: 0 }, path: ['FWD', 'FWD', 'FWD'], hint: 'Dùng Lặp 3× Tiến!' },
+            { start: { r: 4, c: 0, dir: 1 }, goal: { r: 4, c: 3 }, path: ['FWD', 'FWD', 'FWD'], hint: 'Đi thẳng sang phải 3 ô.' },
+            { start: { r: 4, c: 0, dir: 0 }, goal: { r: 2, c: 2 }, path: ['FWD', 'FWD', 'RIGHT', 'FWD', 'FWD'], hint: 'Tiến 2, Quay Phải, Tiến 2.' },
+            { start: { r: 4, c: 1, dir: 0 }, goal: { r: 1, c: 3 }, path: ['FWD', 'FWD', 'FWD', 'RIGHT', 'FWD', 'FWD'], hint: 'Tiến 3, Quay Phải, Tiến 2.' },
+            { start: { r: 4, c: 4, dir: 0 }, goal: { r: 2, c: 1 }, path: ['FWD', 'FWD', 'LEFT', 'FWD', 'FWD', 'FWD'], hint: 'Tiến 2, Quay Trái, Tiến 3.' },
+            { start: { r: 3, c: 0, dir: 1 }, goal: { r: 0, c: 3 }, path: ['FWD', 'FWD', 'FWD', 'LEFT', 'FWD', 'FWD', 'FWD'], hint: 'Tiến 3, Quay Trái, Tiến 3.' },
+            { start: { r: 4, c: 0, dir: 0 }, goal: { r: 0, c: 2 }, path: ['FWD', 'FWD', 'RIGHT', 'FWD', 'FWD', 'LEFT', 'FWD', 'FWD'], hint: 'Tiến 2, Phải, Tiến 2, Trái, Tiến 2.' },
+            { start: { r: 4, c: 2, dir: 0 }, goal: { r: 1, c: 4 }, path: ['FWD', 'FWD', 'RIGHT', 'FWD', 'FWD', 'LEFT', 'FWD'], hint: 'Tiến 2, Phải, Tiến 2, Trái, Tiến 1.' },
+            { start: { r: 0, c: 0, dir: 2 }, goal: { r: 3, c: 3 }, path: ['FWD', 'FWD', 'FWD', 'LEFT', 'FWD', 'FWD', 'FWD'], hint: 'Tiến 3, Quay Trái, Tiến 3.' },
+            { start: { r: 4, c: 0, dir: 0 }, goal: { r: 0, c: 4 }, path: ['FWD', 'FWD', 'RIGHT', 'FWD', 'FWD', 'LEFT', 'FWD', 'FWD', 'RIGHT', 'FWD', 'FWD'], hint: 'Đi theo hình bậc thang tới rương!' }
+          ];
+          const tpl = templates[(wIdx + lIdx) % templates.length];
+          // Compute visited cells so we never place obstacles on the solution path
+          const visited = new Set([tpl.start.r + ',' + tpl.start.c]);
+          const dirs = [{ dr: -1, dc: 0 }, { dr: 0, dc: 1 }, { dr: 1, dc: 0 }, { dr: 0, dc: -1 }];
+          let cr = tpl.start.r, cc = tpl.start.c, cd = tpl.start.dir;
+          tpl.path.forEach(function (cmd) {
+            if (cmd === 'LEFT') cd = (cd + 3) % 4;
+            else if (cmd === 'RIGHT') cd = (cd + 1) % 4;
+            else if (cmd === 'FWD') {
+              cr += dirs[cd].dr;
+              cc += dirs[cd].dc;
+              visited.add(cr + ',' + cc);
+            }
+          });
+          const obstacles = [];
+          for (let r = 0; r < size; r++) {
+            for (let c = 0; c < size; c++) {
+              if (!visited.has(r + ',' + c) && ((r * 3 + c * 7 + wIdx + lIdx) % 4 === 0)) {
+                obstacles.push({ r: r, c: c });
+              }
+            }
+          }
+          return {
+            id: 'exp_' + wIdx + '_' + lIdx,
+            size: size,
+            start: Object.assign({}, tpl.start),
+            goal: { r: cr, c: cc },
+            obstacles: obstacles,
+            hint: tpl.hint,
+            math: buildMathPuzzleForLevel(wIdx, lIdx)
+          };
+        }
+
+        let expWorldIdx = 0;
+        let expLevelIdx = 0;
+        let expCurrentLevel = null;
+        let expMathSolved = false;
+        let expCommands = [];
+        let expRobot = { r: 4, c: 0, dir: 0 };
+        let expRunning = false;
+
+        function getExpCompletedSet() {
+          if (currentUser && currentUser.gameProgress && Array.isArray(currentUser.gameProgress.explorerCompleted)) {
+            return currentUser.gameProgress.explorerCompleted;
+          }
+          return [];
+        }
+
+        function updateExplorerLibraryBadge() {
+          const done = getExpCompletedSet().length;
+          const el1 = document.getElementById('libExplorerProgressText');
+          const el2 = document.getElementById('expTreasureCount');
+          if (el1) el1.textContent = done + ' / 80';
+          if (el2) el2.textContent = String(done);
+        }
+
+        function renderExplorerWorlds() {
+          const bar = document.getElementById('expWorldsBar');
+          if (!bar) return;
+          bar.innerHTML = EXPLORER_WORLDS.map(function (w, idx) {
+            const active = idx === expWorldIdx;
+            return (
+              '<button type="button" data-exp-world="' + idx + '" class="p-2 rounded-xl border text-left transition ' +
+              (active ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100') + '">' +
+                '<div class="text-base leading-none">' + w.icon + '</div>' +
+                '<div class="text-[11px] font-bold mt-1 truncate">' + (idx + 1) + '. ' + w.name + '</div>' +
+              '</button>'
+            );
+          }).join('');
+        }
+
+        function renderExplorerLevels() {
+          const bar = document.getElementById('expLevelsBar');
+          if (!bar) return;
+          const done = getExpCompletedSet();
+          let htmlBtns = '';
+          for (let i = 0; i < 10; i++) {
+            const lid = 'exp_' + expWorldIdx + '_' + i;
+            const isDone = done.indexOf(lid) !== -1;
+            const isAct = i === expLevelIdx;
+            htmlBtns += '<button type="button" data-exp-lvl="' + i + '" class="px-2.5 py-1 rounded-lg text-xs font-bold transition ' +
+              (isAct ? 'bg-amber-500 text-slate-950' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200') + '">' +
+              (isDone ? '💎 ' : '') + 'Màn ' + (expWorldIdx * 10 + i + 1) +
+              '</button>';
+          }
+          bar.innerHTML = htmlBtns;
+        }
+
+        function drawExplorerCanvas() {
+          const canvas = document.getElementById('explorerCanvas');
+          if (!canvas || !expCurrentLevel) return;
+          const ctx = canvas.getContext('2d');
+          const world = EXPLORER_WORLDS[expWorldIdx];
+          const W = canvas.width, H = canvas.height;
+          const pad = 16;
+          const cell = (W - pad * 2) / expCurrentLevel.size;
+
+          ctx.fillStyle = world.bg;
+          ctx.fillRect(0, 0, W, H);
+
+          for (let r = 0; r < expCurrentLevel.size; r++) {
+            for (let c = 0; c < expCurrentLevel.size; c++) {
+              const x = pad + c * cell;
+              const y = pad + r * cell;
+              ctx.fillStyle = (r + c) % 2 === 0 ? world.tileA : world.tileB;
+              ctx.beginPath();
+              ctx.roundRect(x + 2, y + 2, cell - 4, cell - 4, 10);
+              ctx.fill();
+            }
+          }
+
+          // Obstacles
+          ctx.font = Math.floor(cell * 0.55) + 'px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          expCurrentLevel.obstacles.forEach(function (o) {
+            ctx.fillText(world.obs, pad + (o.c + 0.5) * cell, pad + (o.r + 0.5) * cell);
+          });
+
+          // Goal Treasure
+          const gx = pad + (expCurrentLevel.goal.c + 0.5) * cell;
+          const gy = pad + (expCurrentLevel.goal.r + 0.5) * cell;
+          ctx.fillText(expMathSolved ? '💎' : '🔒', gx, gy);
+
+          // Explorer Robot
+          const rx = pad + (expRobot.c + 0.5) * cell;
+          const ry = pad + (expRobot.r + 0.5) * cell;
+          const dirArrows = ['⬆️', '➡️', '⬇️', '⬅️'];
+          ctx.fillStyle = '#4f46e5';
+          ctx.beginPath();
+          ctx.arc(rx, ry, cell * 0.34, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.font = Math.floor(cell * 0.42) + 'px sans-serif';
+          ctx.fillText(dirArrows[expRobot.dir], rx, ry + 1);
+        }
+
+        function renderExplorerQueue() {
+          const q = document.getElementById('expProgramQueue');
+          if (!q) return;
+          if (expCommands.length === 0) {
+            q.innerHTML = '<span class="text-xs text-slate-400 italic">Bấm các khối lệnh ở trên để ghép...</span>';
+            return;
+          }
+          const labels = { FWD: '⬆️ Tiến', LEFT: '↺ Trái', RIGHT: '↻ Phải', FWD2: '🔁 2× Tiến', FWD3: '🔁 3× Tiến' };
+          q.innerHTML = expCommands.map(function (cmd, idx) {
+            return '<button type="button" data-exp-del="' + idx + '" class="px-2.5 py-1 rounded-lg bg-indigo-600 text-white text-xs font-bold hover:bg-rose-600 transition">' +
+              (labels[cmd] || cmd) + ' ✕</button>';
+          }).join('');
+        }
+
+        function loadExplorerLevel(wIdx, lIdx) {
+          if (expRunning) return;
+          expWorldIdx = Math.max(0, Math.min(wIdx, 7));
+          expLevelIdx = Math.max(0, Math.min(lIdx, 9));
+          expCurrentLevel = generateExplorerLevel(expWorldIdx, expLevelIdx);
+          expMathSolved = false;
+          expCommands = [];
+          expRobot = Object.assign({}, expCurrentLevel.start);
+
+          const world = EXPLORER_WORLDS[expWorldIdx];
+          document.getElementById('expWorldSubtitle').textContent = world.icon + ' ' + world.name + ' (' + world.vn + ')';
+          document.getElementById('expTopicBadge').textContent = 'Chủ đề: ' + world.topic;
+          document.getElementById('expLevelTitle').textContent = 'Màn ' + (expWorldIdx * 10 + expLevelIdx + 1) + ' / 80';
+          document.getElementById('expStatusMsg').textContent = 'Bước 1: Giải câu đố Toán để mở khóa Kho báu!';
+          document.getElementById('expMathStatusBadge').textContent = '🔒 Đang khóa';
+          document.getElementById('expMathStatusBadge').className = 'text-xs font-bold text-slate-400';
+          document.getElementById('expNextBtn').classList.add('hidden');
+
+          // Render Math Puzzle
+          document.getElementById('expMathQuestion').textContent = expCurrentLevel.math.q;
+          const uniqueOpts = Array.from(new Set(expCurrentLevel.math.opts)).sort(function () { return Math.random() - 0.5; });
+          document.getElementById('expMathOptions').innerHTML = uniqueOpts.map(function (opt) {
+            return '<button type="button" data-exp-ans="' + opt + '" class="py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 hover:bg-amber-100 dark:hover:bg-amber-950 font-bold text-xs text-slate-800 dark:text-white transition">' + opt + '</button>';
+          }).join('');
+
+          renderExplorerWorlds();
+          renderExplorerLevels();
+          renderExplorerQueue();
+          updateExplorerLibraryBadge();
+          drawExplorerCanvas();
+        }
+
+        document.getElementById('openExplorerGameBtn').addEventListener('click', function () {
+          document.getElementById('libraryCatalogSection').classList.add('hidden');
+          document.getElementById('explorerGameSection').classList.remove('hidden');
+          loadExplorerLevel(expWorldIdx, expLevelIdx);
+        });
+
+        document.getElementById('backFromExplorerBtn').addEventListener('click', function () {
+          document.getElementById('explorerGameSection').classList.add('hidden');
+          document.getElementById('libraryCatalogSection').classList.remove('hidden');
+          updateExplorerLibraryBadge();
+        });
+
+        document.getElementById('expWorldsBar').addEventListener('click', function (e) {
+          const btn = e.target.closest('[data-exp-world]');
+          if (btn && !expRunning) loadExplorerLevel(parseInt(btn.getAttribute('data-exp-world'), 10), 0);
+        });
+
+        document.getElementById('expLevelsBar').addEventListener('click', function (e) {
+          const btn = e.target.closest('[data-exp-lvl]');
+          if (btn && !expRunning) loadExplorerLevel(expWorldIdx, parseInt(btn.getAttribute('data-exp-lvl'), 10));
+        });
+
+        document.getElementById('expMathOptions').addEventListener('click', function (e) {
+          const btn = e.target.closest('[data-exp-ans]');
+          if (!btn || !expCurrentLevel) return;
+          const chosen = Number(btn.getAttribute('data-exp-ans'));
+          if (chosen === expCurrentLevel.math.ans) {
+            expMathSolved = true;
+            document.getElementById('expMathStatusBadge').textContent = '🔓 Đã mở khóa!';
+            document.getElementById('expMathStatusBadge').className = 'text-xs font-bold text-emerald-600';
+            document.getElementById('expStatusMsg').textContent = 'Tuyệt vời! Giờ hãy ghép lệnh cho Robot tới 💎!';
+            playSfx('correct');
+            drawExplorerCanvas();
+          } else {
+            playSfx('wrong');
+            showToast('Chưa đúng rồi, thử tính lại nhé!', 'error');
+          }
+        });
+
+        document.querySelectorAll('[data-exp-cmd]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            if (expRunning) return;
+            expCommands.push(btn.getAttribute('data-exp-cmd'));
+            renderExplorerQueue();
+          });
+        });
+
+        document.getElementById('expProgramQueue').addEventListener('click', function (e) {
+          const btn = e.target.closest('[data-exp-del]');
+          if (!btn || expRunning) return;
+          expCommands.splice(parseInt(btn.getAttribute('data-exp-del'), 10), 1);
+          renderExplorerQueue();
+        });
+
+        document.getElementById('expClearBtn').addEventListener('click', function () {
+          if (expRunning) return;
+          expCommands = [];
+          expRobot = Object.assign({}, expCurrentLevel.start);
+          renderExplorerQueue();
+          drawExplorerCanvas();
+        });
+
+        document.getElementById('expHintBtn').addEventListener('click', function () {
+          if (expCurrentLevel) showToast('💡 Gợi ý: ' + expCurrentLevel.hint, 'info');
+        });
+
+        document.getElementById('expRunBtn').addEventListener('click', async function () {
+          if (expRunning || !expCurrentLevel) return;
+          if (!expMathSolved) {
+            showToast('Hãy giải câu đố Toán ở Bước 1 trước để mở khóa Kho báu!', 'error');
+            return;
+          }
+          if (expCommands.length === 0) {
+            showToast('Hãy ghép ít nhất 1 khối lệnh cho Robot!', 'error');
+            return;
+          }
+          expRunning = true;
+          expRobot = Object.assign({}, expCurrentLevel.start);
+          drawExplorerCanvas();
+
+          const flatSteps = [];
+          expCommands.forEach(function (c) {
+            if (c === 'FWD2') { flatSteps.push('FWD', 'FWD'); }
+            else if (c === 'FWD3') { flatSteps.push('FWD', 'FWD', 'FWD'); }
+            else flatSteps.push(c);
+          });
+
+          const dirs = [{ dr: -1, dc: 0 }, { dr: 0, dc: 1 }, { dr: 1, dc: 0 }, { dr: 0, dc: -1 }];
+          let crashed = false;
+          for (let i = 0; i < flatSteps.length; i++) {
+            const st = flatSteps[i];
+            if (st === 'LEFT') expRobot.dir = (expRobot.dir + 3) % 4;
+            else if (st === 'RIGHT') expRobot.dir = (expRobot.dir + 1) % 4;
+            else if (st === 'FWD') {
+              const nr = expRobot.r + dirs[expRobot.dir].dr;
+              const nc = expRobot.c + dirs[expRobot.dir].dc;
+              const hitObs = expCurrentLevel.obstacles.some(function (o) { return o.r === nr && o.c === nc; });
+              if (nr < 0 || nr >= expCurrentLevel.size || nc < 0 || nc >= expCurrentLevel.size || hitObs) {
+                crashed = true;
+                break;
+              }
+              expRobot.r = nr;
+              expRobot.c = nc;
+            }
+            playSfx('tick');
+            drawExplorerCanvas();
+            await sleep(240);
+          }
+
+          expRunning = false;
+          if (crashed) {
+            playSfx('wrong');
+            document.getElementById('expStatusMsg').textContent = '💥 Robot đụng chướng ngại vật! Hãy sửa lại lệnh.';
+            return;
+          }
+
+          if (expRobot.r === expCurrentLevel.goal.r && expRobot.c === expCurrentLevel.goal.c) {
+            playSfx('win');
+            document.getElementById('expStatusMsg').textContent = '🎉 Tuyệt vời! Đã thu thập được Kho báu!';
+            document.getElementById('expNextBtn').classList.remove('hidden');
+            if (currentUser) {
+              if (!currentUser.gameProgress) currentUser.gameProgress = { completedLevels: [], explorerCompleted: [], totalAttempts: 0, lastScore: null, logs: [] };
+              if (!Array.isArray(currentUser.gameProgress.explorerCompleted)) currentUser.gameProgress.explorerCompleted = [];
+              if (currentUser.gameProgress.explorerCompleted.indexOf(expCurrentLevel.id) === -1) {
+                currentUser.gameProgress.explorerCompleted.push(expCurrentLevel.id);
+              }
+              currentUser.gameProgress.totalAttempts = (currentUser.gameProgress.totalAttempts || 0) + 1;
+              currentUser.gameProgress.lastScore = '💎 Đảo Kho Báu Màn ' + (expWorldIdx * 10 + expLevelIdx + 1);
+              safeSetStorage(DB_STORAGE_KEY, usersDb); pushUsersToCloud();
+              safeSetStorage(SESSION_STORAGE_KEY, currentUser);
+              renderExplorerLevels();
+              updateExplorerLibraryBadge();
+              renderParentPortal();
+            }
+          } else {
+            playSfx('wrong');
+            document.getElementById('expStatusMsg').textContent = '⚠️ Robot chưa tới đúng ô Kho báu 💎!';
+          }
+        });
+
+        document.getElementById('expNextBtn').addEventListener('click', function () {
+          if (expLevelIdx < 9) loadExplorerLevel(expWorldIdx, expLevelIdx + 1);
+          else if (expWorldIdx < 7) loadExplorerLevel(expWorldIdx + 1, 0);
+          else showToast('👑 Chúc mừng bạn đã chinh phục toàn bộ 80 màn Đảo Kho Báu!', 'info');
+        });
+
+        updateExplorerLibraryBadge();
         refreshCloudSyncUi();
         pullUsersFromCloudOrStatic();
         renderAll();
