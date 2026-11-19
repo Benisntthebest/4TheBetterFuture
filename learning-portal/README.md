@@ -1,8 +1,7 @@
 # 4TheBetterFuture
 
-## Tính năng tích hợp
-- **Trang chính (Blank Page)**: Khung trang trắng sẵn sàng phát triển nội dung.
-- **Đăng nhập / Đăng ký & Database**: Lưu `username`, `password`, `birthYear` và `role` vào `localStorage` (có xuất `database.json`).
-- **Tài khoản Admin mặc định**: `Admin` / `xhauwfihf09124` — chỉ tài khoản Admin mới xem được tab Database, bật/tắt ẩn hiện mật khẩu và cấp quyền Admin cho tài khoản khác.
-- **Dark / Light Mode**: Nút chuyển giao diện Sáng / Tối ngay trên thanh điều hướng.
-- **Khu vực Phụ huynh (GUI)**: Giao diện theo dõi tiến độ dựng sẵn.
+## Tính năng
+- **Thư viện Trò chơi**: Game **Phân loại Rác** (băng chuyền tự động + đặt biển báo NẾU/THÌ tại 3 trạm rẽ) với 3 màn có sẵn.
+- **Admin Level Studio & Database**: Đăng nhập `Admin` / `xhauwfihf09124` để xem Database, ẩn/hiện mật khẩu, Xuất/Nhập `database.json` và tự tạo/tải lên `levels.json`.
+- **Ghi nhớ đăng nhập & Dark/Light Mode**: Tự động nhớ tài khoản gần nhất trên thiết bị và chuyển đổi giao diện Sáng/Tối.
+- **Khu vực Phụ huynh**: Tự động đồng bộ kết quả các màn chơi của học viên.

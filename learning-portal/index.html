@@ -12,7 +12,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
@@ -34,27 +34,27 @@
 
       <!-- Navigation Tabs -->
       <nav class="flex items-center gap-1 sm:gap-2">
-        <button id="navBlankBtn" type="button" class="px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white">
-          <svg class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-          <span>Trang trắng</span>
+        <button id="navLibraryBtn" type="button" class="px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white">
+          <svg class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          <span>Thư viện</span>
         </button>
 
         <button id="navParentBtn" type="button" class="px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
           <svg class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-          <span>Tài khoản &amp; Phụ huynh</span>
+          <span class="hidden sm:inline">Tài khoản &amp; Phụ huynh</span>
+          <span class="sm:hidden">Phụ huynh</span>
         </button>
 
-        <!-- Database Tab (Admin Only) -->
+        <!-- Database & Level Studio Tab (Admin Only) -->
         <button id="navDbBtn" type="button" class="hidden px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
           <svg class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/></svg>
-          <span class="hidden sm:inline">Database</span>
+          <span class="hidden sm:inline">Admin &amp; DB</span>
           <span id="dbCountBadge" class="px-1.5 py-0.5 text-xs rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-semibold">0</span>
         </button>
       </nav>
 
       <!-- Right Controls: Theme Setting + Auth Status -->
       <div class="flex items-center gap-2">
-        <!-- Dark / Light Mode Setting Toggle -->
         <button id="themeToggleBtn" type="button" title="Chuyển giao diện Sáng / Tối" class="p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition flex items-center gap-1.5 text-xs font-medium">
           <svg id="themeSunIcon" class="w-4 h-4 hidden text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
           <svg id="themeMoonIcon" class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
@@ -68,7 +68,7 @@
           </div>
         </div>
         <button id="openAuthModalBtn" type="button" class="px-3.5 py-2 rounded-lg text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition shadow-sm">
-          Đăng nhập / Đăng ký
+          Đăng nhập
         </button>
         <button id="logoutBtn" type="button" class="hidden px-3 py-2 rounded-lg text-sm font-medium border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
           Đăng xuất
@@ -80,73 +80,189 @@
   <!-- Main Workspace Container -->
   <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6">
 
-    <!-- VIEW 1: BLANK PAGE WORKSPACE (Trang web trắng hiện tại) -->
-    <section id="viewBlank" class="fade-in">
-      <div class="bg-white dark:bg-slate-900 border border-dashed border-slate-300 dark:border-slate-700 rounded-2xl min-h-[72vh] flex flex-col items-center justify-center p-6 sm:p-12 text-center relative transition-colors duration-200">
-        <div class="max-w-md mx-auto space-y-4">
-          <div class="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center mx-auto text-slate-400">
-            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+    <!-- VIEW 1: LIBRARY + WASTE SORTING GAME -->
+    <section id="viewLibrary" class="fade-in space-y-6">
+
+      <!-- Library Overview Header -->
+      <div id="libraryCatalogSection" class="space-y-6">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900">
+              Thư viện Trò chơi Học tập
+            </span>
+            <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-2">
+              Học Tư duy Logic qua Trò chơi
+            </h1>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              Chọn trò chơi bên dưới để rèn luyện tư duy lập trình IF / THEN và cập nhật tiến độ cho phụ huynh theo dõi.
+            </p>
           </div>
+          <div id="libraryUserBanner" class="hidden px-4 py-2.5 rounded-xl bg-indigo-50/80 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-900 text-xs">
+            <p class="text-slate-500 dark:text-slate-400">Học viên hiện tại</p>
+            <p class="font-bold text-indigo-700 dark:text-indigo-300 text-sm" id="libUserName"></p>
+          </div>
+        </div>
 
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-            Trang trắng (Blank Page)
-          </span>
-
-          <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
-            Trang web trắng
-          </h1>
-
-          <p class="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-            Nội dung trang chính hiện để trống để bạn phát triển sau. Đã tích hợp sẵn <strong>Login / Register (User, Pass, Năm sinh lưu vào Database)</strong>, phân quyền <strong>Admin</strong> và <strong>GUI Tài khoản cho Phụ huynh theo dõi tiến độ</strong>.
-          </p>
-
-          <!-- Dynamic Logged-in Banner inside Blank Page -->
-          <div id="blankPageUserCard" class="hidden mt-4 p-4 rounded-xl bg-indigo-50/70 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900 text-left">
-            <div class="flex items-center justify-between gap-3">
-              <div>
-                <p class="text-xs font-semibold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Đang đăng nhập</p>
-                <p class="text-sm font-bold text-slate-900 dark:text-white mt-0.5">
-                  Tài khoản: <span id="blankCardUser"></span> • <span id="blankCardBirthYear" class="text-slate-600 dark:text-slate-300 font-medium"></span>
-                </p>
+        <!-- Games Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <!-- Game Card 1: Phân loại Rác -->
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between">
+            <div>
+              <div class="h-36 bg-gradient-to-br from-emerald-500 via-teal-500 to-sky-500 p-5 flex flex-col justify-between text-white relative overflow-hidden">
+                <div class="flex items-center justify-between z-10">
+                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-white/20 backdrop-blur-xs">Tư duy IF / THEN</span>
+                  <span id="libGameLevelCountBadge" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-900/25">10 Levels</span>
+                </div>
+                <div class="flex items-center gap-3 z-10">
+                  <div class="text-3xl">♻️</div>
+                  <div>
+                    <h2 class="font-extrabold text-lg leading-tight">Phân loại Rác</h2>
+                    <p class="text-xs text-emerald-50">Băng chuyền &amp; Biển báo rẽ nhánh</p>
+                  </div>
+                </div>
               </div>
-              <button id="blankGoParentBtn" type="button" class="shrink-0 px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700 transition">
-                Mở Acc Section
+              <div class="p-5 space-y-2">
+                <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                  Đặt các biển báo điều kiện <strong>NẾU ... THÌ ...</strong> tại các trạm rẽ trên băng chuyền để tự động đưa rác hữu cơ, nhựa/kim loại, giấy và rác khác vào đúng thùng.
+                </p>
+                <div class="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-2">
+                  <span>Tiến độ: <strong id="libWasteProgressText" class="text-indigo-600 dark:text-indigo-400">0 / 10</strong> màn</span>
+                  <span>Tự động lưu điểm</span>
+                </div>
+              </div>
+            </div>
+            <div class="px-5 pb-5">
+              <button id="openWasteGameBtn" type="button" class="w-full py-2.5 px-4 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 transition shadow-sm flex items-center justify-center gap-2">
+                <span>Chơi ngay</span>
+                <span>→</span>
               </button>
             </div>
           </div>
 
-          <!-- Quick Action Buttons -->
-          <div class="pt-2 flex flex-wrap items-center justify-center gap-3">
-            <button id="heroAuthBtn" type="button" class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition shadow-sm">
-              Đăng nhập / Đăng ký
-            </button>
-            <button id="heroParentBtn" type="button" class="px-4 py-2.5 rounded-xl text-sm font-semibold bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition">
-              Mở GUI Phụ huynh (Track Progress)
-            </button>
+          <!-- Placeholder Card: Upcoming Game -->
+          <div class="bg-white/60 dark:bg-slate-900/50 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 p-6 flex flex-col items-center justify-center text-center min-h-[260px]">
+            <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-2xl mb-3">🧩</div>
+            <h3 class="font-bold text-slate-700 dark:text-slate-300 text-base">Trò chơi tiếp theo</h3>
+            <p class="text-xs text-slate-400 mt-1 max-w-xs">
+              Khu vực dành cho các trò chơi học tập mới sẽ được bổ sung vào Thư viện trong các bản cập nhật sau.
+            </p>
           </div>
         </div>
       </div>
+
+      <!-- ACTIVE GAME VIEW: PHÂN LOẠI RÁC (10 LEVELS: FIXED BINS, NOT/OR, ATTRS, WASHER LOOP, OPTIMIZATION) -->
+      <div id="wasteGameSection" class="hidden space-y-4">
+        <!-- Top Game Control Bar -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <button id="backToLibraryBtn" type="button" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+              ← Thư viện
+            </button>
+            <div>
+              <h2 class="font-extrabold text-lg text-slate-900 dark:text-white leading-tight">♻️ Phân loại Rác — Tư duy Lập trình</h2>
+              <p id="gameLevelSubtitle" class="text-xs text-slate-500 dark:text-slate-400"></p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <div class="px-3 py-1.5 rounded-full bg-amber-50 dark:bg-amber-950/70 border border-amber-200 dark:border-amber-800 text-xs font-bold text-amber-700 dark:text-amber-300">
+              ⚡ Bước: <span id="gameStepsCounter">0</span> <span id="gameOptimalHint" class="font-normal opacity-80"></span>
+            </div>
+            <div class="px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+              ĐÃ PHÂN LOẠI: <span id="gameSortedCounter">0/0</span>
+            </div>
+            <div class="px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 font-mono">
+              ⏱ <span id="gameTimerDisplay">01:30</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Level Selector Pills -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 px-4 py-3 shadow-xs flex flex-wrap items-center justify-between gap-2">
+          <div id="levelSelectorBar" class="flex flex-wrap items-center gap-1.5"></div>
+          <button id="soundToggleBtn" type="button" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+            🔊 Âm thanh: Bật
+          </button>
+        </div>
+
+        <!-- Game Board Canvas Area -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 sm:p-5 shadow-sm space-y-4">
+
+          <!-- Mission Briefing Banner -->
+          <div class="flex flex-wrap items-center justify-between gap-2 px-3.5 py-2.5 rounded-xl bg-indigo-50/80 dark:bg-indigo-950/50 border border-indigo-100 dark:border-indigo-900 text-xs">
+            <span id="gameActiveItemStatus" class="font-bold text-indigo-800 dark:text-indigo-200">
+              Mục tiêu màn chơi
+            </span>
+            <span id="gameModeBadge" class="px-2 py-0.5 rounded-md bg-white dark:bg-slate-800 text-indigo-700 dark:text-indigo-300 font-semibold border border-indigo-100 dark:border-slate-700">
+              Cơ bản
+            </span>
+          </div>
+
+          <!-- 2D Animated Conveyor & Sorting Stage -->
+          <div class="relative w-full rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 bg-sky-100 dark:bg-slate-950">
+            <canvas id="wasteFactoryCanvas" class="w-full block" style="height: 410px;"></canvas>
+          </div>
+
+          <!-- Pre-processing Washer Station Control (Visible in Washer Levels 7-8, 10) -->
+          <div id="washerControlBar" class="hidden p-3.5 rounded-xl border-2 border-cyan-300 dark:border-cyan-700 bg-cyan-50/70 dark:bg-cyan-950/40 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-cyan-500 text-white flex items-center justify-center text-xl shadow-xs">🚿</div>
+              <div>
+                <p class="text-xs font-extrabold text-cyan-900 dark:text-cyan-200 uppercase">Trạm Tiền Xử Lý — Máy Rửa Sạch (Vòng lặp Loop)</p>
+                <p class="text-xs text-cyan-700 dark:text-cyan-300">Rác dính bẩn (💧) nếu vào thẳng thùng sẽ làm hỏng cả thùng! Bật bộ lọc để rửa sạch rồi quay lại băng chuyền.</p>
+              </div>
+            </div>
+            <label class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white dark:bg-slate-900 border border-cyan-300 dark:border-cyan-700 cursor-pointer select-none text-xs font-bold text-slate-800 dark:text-white shadow-xs">
+              <input id="washerRuleToggle" type="checkbox" class="w-4 h-4 rounded text-cyan-600 focus:ring-cyan-500" />
+              <span>NẾU [Rác bẩn] → Rẽ vào 🚿 Rửa sạch</span>
+            </label>
+          </div>
+
+          <!-- Dynamic Signpost Station Cards (2 or 3 stations depending on level, with Fixed Pipes to Bins) -->
+          <div id="stationsConfigGrid" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Rendered dynamically by JS based on current level -->
+          </div>
+
+          <!-- Run / Reset Controls -->
+          <div class="flex flex-wrap items-center justify-center gap-3 pt-1">
+            <button id="runConveyorBtn" type="button" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md transition flex items-center gap-2">
+              <span>▶ Chạy băng chuyền</span>
+            </button>
+            <button id="resetLevelBtn" type="button" class="px-5 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-semibold text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition">
+              ↺ Làm lại màn này
+            </button>
+          </div>
+
+          <!-- Result Banner -->
+          <div id="gameResultBanner" class="hidden rounded-xl p-4 border text-sm font-semibold flex flex-wrap items-center justify-between gap-3">
+            <div class="space-y-0.5">
+              <p id="gameResultText"></p>
+              <p id="gameStarsText" class="text-xs opacity-90"></p>
+            </div>
+            <button id="nextLevelBtn" type="button" class="hidden px-4 py-2 rounded-lg bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 transition">
+              Màn tiếp theo →
+            </button>
+          </div>
+
+        </div>
+      </div>
+
     </section>
 
     <!-- VIEW 2: ACCOUNT & PARENT PROGRESS TRACKING GUI -->
     <section id="viewParent" class="hidden fade-in space-y-6">
-      <!-- Top Header Banner of Parent Portal -->
       <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <div class="flex items-center gap-2">
             <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-100 dark:border-indigo-900">
               Account &amp; Parent Section
             </span>
-            <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-900">
-              Khung GUI sẵn sàng (Chưa có dữ liệu)
-            </span>
           </div>
           <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-2">
             Theo dõi Tiến độ Học tập (Dành cho Phụ huynh)
           </h2>
           <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Giao diện dựng sẵn để phụ huynh kiểm tra thông tin tài khoản và theo dõi tiến độ sau khi cập nhật nội dung.
+            Tự động cập nhật khi học viên hoàn thành các màn chơi trong Thư viện.
           </p>
         </div>
 
@@ -157,9 +273,8 @@
         </div>
       </div>
 
-      <!-- Student Account Info + Empty Progress Overview -->
+      <!-- Student Account Info + Real Progress Overview -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Left Card: Account Profile -->
         <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
@@ -190,23 +305,18 @@
                 <dt class="text-slate-500 dark:text-slate-400">Năm sinh:</dt>
                 <dd id="detailBirthYear" class="font-semibold text-slate-800 dark:text-slate-100">—</dd>
               </div>
-              <div class="flex items-center justify-between py-1.5 border-b border-slate-100 dark:border-slate-800">
-                <dt class="text-slate-500 dark:text-slate-400">Lộ trình học:</dt>
-                <dd class="text-xs font-medium text-slate-400 italic">Chưa thiết lập</dd>
-              </div>
               <div class="flex items-center justify-between py-1.5">
                 <dt class="text-slate-500 dark:text-slate-400">Ngày tạo TK:</dt>
                 <dd id="detailCreatedAt" class="text-xs font-medium text-slate-600 dark:text-slate-400">—</dd>
               </div>
             </dl>
           </div>
-
-          <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
-            <span class="text-xs text-slate-400">Thông tin lưu trong Database</span>
+          <div class="mt-5 pt-4 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-400">
+            Đồng bộ tiến độ từ Trò chơi Thư viện
           </div>
         </div>
 
-        <!-- Right 2 Columns: Parent KPI Summary Cards (4 empty GUI metrics) -->
+        <!-- Right 2 Columns: Parent KPI Summary Cards -->
         <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm flex flex-col justify-between">
             <div class="flex items-center justify-between">
@@ -214,84 +324,72 @@
               <span class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold text-xs">%</span>
             </div>
             <div class="my-2">
-              <p class="text-2xl font-bold text-slate-900 dark:text-white">0%</p>
+              <p id="kpiProgressVal" class="text-2xl font-bold text-slate-900 dark:text-white">0%</p>
               <div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mt-2">
-                <div class="h-full bg-indigo-600 rounded-full" style="width: 0%"></div>
+                <div id="kpiProgressBar" class="h-full bg-indigo-600 rounded-full transition-all duration-300" style="width: 0%"></div>
               </div>
             </div>
-            <p class="text-xs text-slate-400">Chưa có dữ liệu bài học</p>
+            <p id="kpiProgressSub" class="text-xs text-slate-400">Chưa hoàn thành màn chơi nào</p>
           </div>
 
           <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm flex flex-col justify-between">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Thời gian học trong tuần</span>
-              <span class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">h</span>
-            </div>
-            <p class="text-2xl font-bold text-slate-900 dark:text-white my-2">0.0 giờ</p>
-            <p class="text-xs text-slate-400">Chưa ghi nhận thời gian hoạt động</p>
-          </div>
-
-          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm flex flex-col justify-between">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Bài tập hoàn thành</span>
+              <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Màn chơi hoàn thành</span>
               <span class="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-xs">✓</span>
             </div>
-            <p class="text-2xl font-bold text-slate-900 dark:text-white my-2">0 / 0</p>
-            <p class="text-xs text-slate-400">Điểm trung bình: —</p>
+            <p id="kpiLevelsVal" class="text-2xl font-bold text-slate-900 dark:text-white my-2">0 / 3</p>
+            <p id="kpiLevelsSub" class="text-xs text-slate-400">Game: Phân loại Rác</p>
           </div>
 
           <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm flex flex-col justify-between">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Chuỗi ngày học (Streak)</span>
-              <span class="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold text-xs">🔥</span>
+              <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Tổng số lần chơi</span>
+              <span class="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-xs">▶</span>
             </div>
-            <p class="text-2xl font-bold text-slate-900 dark:text-white my-2">0 ngày</p>
-            <p class="text-xs text-slate-400">Lần học gần nhất: Chưa có</p>
+            <p id="kpiAttemptsVal" class="text-2xl font-bold text-slate-900 dark:text-white my-2">0 lượt</p>
+            <p class="text-xs text-slate-400">Ghi nhận trên thiết bị hiện tại</p>
+          </div>
+
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Điểm chính xác gần nhất</span>
+              <span class="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400 flex items-center justify-center font-bold text-xs">★</span>
+            </div>
+            <p id="kpiLastScoreVal" class="text-2xl font-bold text-slate-900 dark:text-white my-2">—</p>
+            <p id="kpiLastPlayedSub" class="text-xs text-slate-400">Chưa có lượt chơi nào</p>
           </div>
         </div>
       </div>
 
       <!-- Detailed Parent Tracking Sections: Weekly Chart GUI + Activity Log -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Weekly Study Time Bar GUI -->
         <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
           <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
             <div>
-              <h3 class="font-bold text-slate-900 dark:text-white text-base">Biểu đồ thời lượng học theo ngày (GUI)</h3>
-              <p class="text-xs text-slate-500 dark:text-slate-400">Khung thống kê từ Thứ 2 đến Chủ nhật (hiện chưa có dữ liệu)</p>
+              <h3 class="font-bold text-slate-900 dark:text-white text-base">Biểu đồ lượt thực hành theo ngày (GUI)</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Khung thống kê từ Thứ 2 đến Chủ nhật</p>
             </div>
-            <span class="text-xs px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-medium">
-              0 phút / tuần
-            </span>
           </div>
 
           <div id="weeklyBarsContainer" class="mt-6 h-44 flex items-end justify-between gap-2 sm:gap-4 pt-6 px-2 border-b border-slate-100 dark:border-slate-800">
             <!-- Rendered by JS -->
           </div>
-
-          <div class="mt-4 flex items-center justify-between text-xs text-slate-400">
-            <span>Trạng thái: Đang chờ kết nối dữ liệu bài học</span>
-            <span>Cập nhật tự động</span>
-          </div>
         </div>
 
-        <!-- Activity Log & Parent Notes GUI -->
         <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
               <div>
                 <h3 class="font-bold text-slate-900 dark:text-white text-base">Nhật ký hoạt động</h3>
-                <p class="text-xs text-slate-500 dark:text-slate-400">Lịch sử học tập hiển thị cho phụ huynh</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Kết quả các màn chơi gần đây</p>
               </div>
             </div>
 
-            <div class="mt-4 py-8 px-4 text-center rounded-xl border border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/40">
-              <p class="text-xs font-semibold text-slate-600 dark:text-slate-300">Chưa có dữ liệu tiến độ</p>
-              <p class="text-[11px] text-slate-400 mt-1">Khi có bài học được thực hiện, kết quả và thời gian sẽ hiển thị tại khung này.</p>
+            <div id="parentActivityFeed" class="mt-4 space-y-2.5 max-h-52 overflow-y-auto">
+              <!-- Populated by JS -->
             </div>
           </div>
 
-          <!-- Parent Note Box -->
           <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800">
             <label for="parentNoteInput" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
               Ghi chú của Phụ huynh:
@@ -308,43 +406,47 @@
       </div>
     </section>
 
-    <!-- VIEW 3: DATABASE INSPECTOR (Admin Only) -->
+    <!-- VIEW 3: ADMIN DATABASE & LEVEL BUILDER STUDIO (Admin Only) -->
     <section id="viewDb" class="hidden fade-in space-y-6">
+      <!-- Part A: Users Database -->
       <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
           <div>
             <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900">
-              Admin Database (LocalStorage + JSON)
+              Admin Database
             </span>
             <h2 class="text-xl font-bold text-slate-900 dark:text-white mt-2">
-              Danh sách Tài khoản trong Database
+              Quản lý Tài khoản (Users)
             </h2>
-            <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-              Chỉ tài khoản có quyền <strong>Admin</strong> mới xem và quản lý được khu vực này.
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              Mẹo: Khi deploy lại hoặc đổi URL, dùng <strong>Xuất / Nhập database.json</strong> để giữ toàn bộ tài khoản.
             </p>
           </div>
           <div class="flex flex-wrap items-center gap-2">
-            <button id="toggleAllPassBtn" type="button" class="px-3.5 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+            <button id="toggleAllPassBtn" type="button" class="px-3 py-2 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
               Hiện tất cả Pass
             </button>
-            <button id="exportDbJsonBtn" type="button" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900 transition">
-              Tải về database.json
+            <button id="exportDbJsonBtn" type="button" class="px-3 py-2 rounded-xl text-xs font-semibold bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900 transition">
+              Xuất database.json
             </button>
-            <button id="clearDbBtn" type="button" class="px-3.5 py-2 rounded-xl text-xs font-semibold border border-rose-200 dark:border-rose-900 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition">
+            <label for="importDbInput" class="cursor-pointer px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900 transition">
+              Nhập database.json
+              <input id="importDbInput" type="file" accept=".json" class="hidden" />
+            </label>
+            <button id="clearDbBtn" type="button" class="px-3 py-2 rounded-xl text-xs font-semibold border border-rose-200 dark:border-rose-900 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition">
               Xóa user thường
             </button>
           </div>
         </div>
 
-        <!-- Users Table -->
         <div class="overflow-x-auto mt-4">
           <table class="w-full text-left border-collapse text-sm">
             <thead>
               <tr class="border-b border-slate-200 dark:border-slate-800 text-xs uppercase text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/60">
                 <th class="py-3 px-3 font-semibold">ID</th>
-                <th class="py-3 px-3 font-semibold">Tài khoản (User)</th>
+                <th class="py-3 px-3 font-semibold">Tài khoản</th>
                 <th class="py-3 px-3 font-semibold">Vai trò</th>
-                <th class="py-3 px-3 font-semibold">Mật khẩu (Pass)</th>
+                <th class="py-3 px-3 font-semibold">Mật khẩu</th>
                 <th class="py-3 px-3 font-semibold">Năm sinh</th>
                 <th class="py-3 px-3 font-semibold">Ngày tạo</th>
                 <th class="py-3 px-3 font-semibold text-right">Thao tác</th>
@@ -356,11 +458,87 @@
           </table>
         </div>
       </div>
+
+      <!-- Part B: Admin Level Builder for Waste Sorting Game -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-4">
+          <div>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-900">
+              Level Studio (Game Phân loại Rác)
+            </span>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white mt-2">
+              Tự tạo &amp; Tải lên Level mới
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              Tạo thêm màn chơi ngay trên web hoặc xuất file <code>levels.json</code> để commit vào thư mục <code>data/levels.json</code> trên GitHub.
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="exportLevelsJsonBtn" type="button" class="px-3 py-2 rounded-xl text-xs font-semibold bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900 transition">
+              Xuất levels.json
+            </button>
+            <label for="importLevelsInput" class="cursor-pointer px-3 py-2 rounded-xl text-xs font-semibold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900 transition">
+              Upload levels.json
+              <input id="importLevelsInput" type="file" accept=".json" class="hidden" />
+            </label>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Left: Create New Level Form -->
+          <form id="createLevelForm" class="space-y-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700">
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white">Tạo màn chơi mới</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="newLvlTitle" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Tên màn chơi</label>
+                <input id="newLvlTitle" type="text" required placeholder="VD: Level 4 — Siêu thị xanh" class="w-full px-3 py-2 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+              </div>
+              <div>
+                <label for="newLvlTime" class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Thời gian (giây)</label>
+                <input id="newLvlTime" type="number" min="30" max="300" value="90" required class="w-full px-3 py-2 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+              </div>
+            </div>
+
+            <!-- Add item to draft level -->
+            <div class="space-y-2">
+              <p class="text-xs font-semibold text-slate-700 dark:text-slate-300">Thêm rác vào băng chuyền:</p>
+              <div class="flex flex-wrap gap-2">
+                <input id="draftItemEmoji" type="text" maxlength="4" value="🍎" class="w-14 px-2 py-1.5 text-center text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg" />
+                <input id="draftItemName" type="text" placeholder="Tên món (VD: Lõi táo)" class="flex-1 min-w-[120px] px-2.5 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg" />
+                <select id="draftItemCat" class="px-2.5 py-1.5 text-xs bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg">
+                  <option value="organic">Hữu cơ</option>
+                  <option value="plastic_metal">Nhựa / Kim loại</option>
+                  <option value="paper">Giấy</option>
+                  <option value="other">Khác</option>
+                </select>
+                <button id="addDraftItemBtn" type="button" class="px-3 py-1.5 rounded-lg bg-slate-900 dark:bg-indigo-600 text-white text-xs font-semibold hover:bg-slate-800 transition">
+                  + Thêm
+                </button>
+              </div>
+              <div id="draftLevelItemsList" class="flex flex-wrap gap-1.5 pt-1 min-h-[32px]">
+                <!-- Draft items -->
+              </div>
+            </div>
+
+            <button type="submit" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition">
+              Lưu Level vào Thư viện Game
+            </button>
+          </form>
+
+          <!-- Right: Existing Levels List -->
+          <div class="space-y-3">
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white">Danh sách Level hiện có (<span id="adminLevelsCount">3</span>)</h3>
+            <div id="adminLevelsList" class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
   </main>
 
-  <!-- AUTH MODAL (Login + Register with Username, Password, Birth Year) -->
+  <!-- AUTH MODAL (Login with Remember Me + Register) -->
   <div id="authModalBackdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 max-w-md w-full p-6 shadow-xl fade-in relative">
       <button id="closeAuthModalBtn" type="button" class="absolute top-4 right-4 w-8 h-8 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center">
@@ -381,7 +559,7 @@
       <form id="loginForm" class="space-y-4">
         <div>
           <h3 class="text-lg font-bold text-slate-900 dark:text-white">Đăng nhập</h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Nhập tên tài khoản và mật khẩu của bạn</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Tài khoản gần nhất trên thiết bị sẽ được tự động ghi nhớ</p>
         </div>
 
         <div>
@@ -394,6 +572,11 @@
           <input id="loginPassword" type="password" required autocomplete="current-password" placeholder="Nhập mật khẩu..." class="w-full px-3.5 py-2.5 text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500" />
         </div>
 
+        <label class="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 cursor-pointer select-none">
+          <input id="rememberMeCheckbox" type="checkbox" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+          <span>Ghi nhớ tài khoản &amp; mật khẩu trên thiết bị này</span>
+        </label>
+
         <p id="loginErrorMsg" class="hidden text-xs font-medium text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-900 rounded-lg px-3 py-2"></p>
 
         <button type="submit" class="w-full py-2.5 px-4 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 transition shadow-sm">
@@ -401,7 +584,7 @@
         </button>
       </form>
 
-      <!-- REGISTER FORM (Username + Password + Birth Year) -->
+      <!-- REGISTER FORM -->
       <form id="registerForm" class="hidden space-y-4">
         <div>
           <h3 class="text-lg font-bold text-slate-900 dark:text-white">Đăng ký tài khoản</h3>
@@ -435,12 +618,12 @@
   <!-- Footer -->
   <footer class="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-4 mt-8 transition-colors duration-200">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-2">
-      <span>4TheBetterFuture — Login, Register, Parent Track Progress &amp; Admin Database</span>
-      <span>Database: LocalStorage / JSON</span>
+      <span>4TheBetterFuture — Thư viện Học tập, Parent Tracking &amp; Admin Studio</span>
+      <span>LocalStorage + JSON Export/Import</span>
     </div>
   </footer>
 
-  <!-- Main Application & Database Logic -->
+  <!-- Main Application & Game Logic -->
   <script src="js/app.js"></script>
 </body>
 </html>

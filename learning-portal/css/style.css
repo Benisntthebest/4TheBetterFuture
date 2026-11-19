@@ -16,3 +16,23 @@ body {
     transform: translateY(0);
   }
 }
+
+@keyframes beltScroll {
+  0% { background-position: 0 0; }
+  100% { background-position: 32px 0; }
+}
+
+.conveyor-belt {
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(148, 163, 184, 0.25) 0px,
+    rgba(148, 163, 184, 0.25) 14px,
+    transparent 14px,
+    transparent 32px
+  );
+  background-size: 32px 100%;
+}
+
+.conveyor-running {
+  animation: beltScroll 0.8s linear infinite;
+}
