@@ -1,0 +1,14 @@
+{
+  "users": [
+    {
+      "id": "usr_admin_01",
+      "username": "Admin",
+      "password": "xhauwfihf09124",
+      "birthYear": 2000,
+      "role": "admin",
+      "isPrimaryAdmin": true,
+      "createdAt": "Mặc định",
+      "parentNotes": []
+    }
+  ]
+}
