@@ -1522,9 +1522,68 @@
         renderParentPortal();
       }
 
-      // --- PARENT PORTAL ---
+      // --- PARENT PORTAL (IXL FAMILY SUPPORT) ---
+      let selectedChildUsername = null;
+
+      function isParentAccount(user) {
+        return Boolean(user && user.role === 'parent');
+      }
+
+      function getChildrenOfParent(parentUsername) {
+        if (!parentUsername) return [];
+        return usersDb.filter(function (u) {
+          return u.parentUsername && u.parentUsername.toLowerCase() === parentUsername.toLowerCase();
+        });
+      }
+
+      function renderIxlFamilyPanel() {
+        const panel = document.getElementById('ixlFamilyPanel');
+        if (!panel) return;
+        if (!isParentAccount(currentUser)) {
+          panel.classList.add('hidden');
+          return;
+        }
+        panel.classList.remove('hidden');
+        const children = getChildrenOfParent(currentUser.username);
+        document.getElementById('ixlChildrenCount').textContent = String(children.length);
+        if (children.length > 0 && (!selectedChildUsername || !children.some(function (c) { return c.username === selectedChildUsername; }))) {
+          selectedChildUsername = children[0].username;
+        }
+        const listEl = document.getElementById('ixlChildrenList');
+        if (children.length === 0) {
+          listEl.innerHTML = '<div class="col-span-full p-4 rounded-xl border border-dashed border-slate-200 dark:border-slate-700 text-xs text-slate-400 text-center">Chưa có tài khoản Con nào. Hãy tạo ở khung bên phải!</div>';
+          return;
+        }
+        listEl.innerHTML = children.map(function (c) {
+          const isSel = c.username === selectedChildUsername;
+          const gp = c.gameProgress || {};
+          const wDone = (gp.completedLevels || []).length;
+          const eDone = (gp.explorerCompleted || []).length;
+          const bDone = (gp.bakeryCompleted || []).length;
+          return (
+            '<div class="p-3 rounded-xl border-2 transition ' + (isSel ? 'border-indigo-500 bg-indigo-50/60 dark:bg-indigo-950/40' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50') + '">' +
+              '<div class="flex items-center justify-between gap-2">' +
+                '<button type="button" data-select-child="' + escapeHtml(c.username) + '" class="text-left flex-1">' +
+                  '<p class="font-bold text-xs text-slate-900 dark:text-white">🎓 ' + escapeHtml(c.username) + ' (' + c.birthYear + ')</p>' +
+                  '<p class="text-[11px] text-slate-500 dark:text-slate-400">Rác: ' + wDone + '/10 • Đảo: ' + eDone + '/80 • Bánh: ' + bDone + '/8</p>' +
+                '</button>' +
+                '<button type="button" data-play-as-child="' + escapeHtml(c.username) + '" class="px-2 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold shrink-0">Vào chơi</button>' +
+              '</div>' +
+            '</div>'
+          );
+        }).join('');
+      }
+
       function renderParentPortal() {
         syncCurrentUser();
+        renderIxlFamilyPanel();
+
+        // If Parent is logged in and has a selected child, show that child's progress!
+        let viewedUser = currentUser;
+        if (isParentAccount(currentUser) && selectedChildUsername) {
+          const childObj = usersDb.find(function (u) { return u.username === selectedChildUsername; });
+          if (childObj) viewedUser = childObj;
+        }
 
         const profileAvatar = document.getElementById('profileAvatar');
         const profileUsername = document.getElementById('profileUsername');
@@ -1535,19 +1594,21 @@
         const detailBirthYear = document.getElementById('detailBirthYear');
         const detailCreatedAt = document.getElementById('detailCreatedAt');
 
-        if (currentUser) {
-          profileAvatar.textContent = currentUser.username.charAt(0).toUpperCase();
-          profileUsername.textContent = currentUser.username;
-          profileRoleText.textContent = isAdmin(currentUser) ? 'Quản trị viên hệ thống' : 'Đã đồng bộ từ Database';
-          profileStatusPill.textContent = isAdmin(currentUser) ? 'Admin' : 'Đang hoạt động';
-          profileStatusPill.className = isAdmin(currentUser)
+        if (viewedUser) {
+          profileAvatar.textContent = viewedUser.username.charAt(0).toUpperCase();
+          profileUsername.textContent = viewedUser.username;
+          profileRoleText.textContent = isParentAccount(currentUser) && viewedUser !== currentUser
+            ? ('Đang xem tiến độ của bé (Phụ huynh: ' + currentUser.username + ')')
+            : (isAdmin(viewedUser) ? 'Quản trị viên hệ thống' : (isParentAccount(viewedUser) ? 'Tài khoản Phụ huynh' : 'Đã đồng bộ từ Database'));
+          profileStatusPill.textContent = isAdmin(viewedUser) ? 'Admin' : (isParentAccount(viewedUser) ? 'Phụ huynh' : 'Học viên');
+          profileStatusPill.className = isAdmin(viewedUser)
             ? 'px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-900'
             : 'px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900';
 
-          detailUsername.textContent = currentUser.username;
-          detailRole.textContent = isAdmin(currentUser) ? 'Admin' : 'Học viên';
-          detailBirthYear.textContent = String(currentUser.birthYear);
-          detailCreatedAt.textContent = currentUser.createdAt || 'Hôm nay';
+          detailUsername.textContent = viewedUser.username;
+          detailRole.textContent = isAdmin(viewedUser) ? 'Admin' : (isParentAccount(viewedUser) ? 'Phụ huynh' : 'Học viên');
+          detailBirthYear.textContent = String(viewedUser.birthYear);
+          detailCreatedAt.textContent = viewedUser.createdAt || 'Hôm nay';
         } else {
           profileAvatar.textContent = '?';
           profileUsername.textContent = 'Chưa đăng nhập';
@@ -1561,7 +1622,7 @@
           detailCreatedAt.textContent = '—';
         }
 
-        const gp = (currentUser && currentUser.gameProgress) ? currentUser.gameProgress : { completedLevels: [], totalAttempts: 0, lastScore: null, logs: [] };
+        const gp = (viewedUser && viewedUser.gameProgress) ? viewedUser.gameProgress : { completedLevels: [], totalAttempts: 0, lastScore: null, logs: [] };
         const totalLvls = wasteLevels.length || 1;
         const completedLvls = Array.isArray(gp.completedLevels) ? gp.completedLevels.length : 0;
         const pct = Math.min(100, Math.round((completedLvls / totalLvls) * 100));
@@ -1783,7 +1844,7 @@
         }
       }
 
-      window.addEventListener('DOMContentLoaded', function () {
+      function initApp() {
         initTheme();
 
         document.getElementById('themeToggleBtn').addEventListener('click', toggleTheme);
@@ -1922,7 +1983,7 @@
             username: username,
             password: password,
             birthYear: birthYear,
-            role: 'student',
+            role: (document.querySelector('input[name="regAccountType"]:checked')?.value === 'parent' ? 'parent' : 'student'),
             createdAt: new Date().toLocaleDateString('vi-VN'),
             parentNotes: [],
             gameProgress: { completedLevels: [], totalAttempts: 0, lastScore: null, logs: [] }
@@ -2750,10 +2811,77 @@
           renderBakerySlicesUI();
         }
 
-        document.getElementById('openBakeryGameBtn').addEventListener('click', function () {
-          document.getElementById('libraryCatalogSection').classList.add('hidden');
-          document.getElementById('bakeryGameSection').classList.remove('hidden');
-          loadBakeryOrder(bakeryIdx);
+        function openBakeryGameSafe() {
+          try {
+            document.getElementById('libraryCatalogSection').classList.add('hidden');
+            document.getElementById('wasteGameSection').classList.add('hidden');
+            document.getElementById('robotMazeSection').classList.add('hidden');
+            document.getElementById('explorerGameSection').classList.add('hidden');
+            document.getElementById('bakeryGameSection').classList.remove('hidden');
+            loadBakeryOrder(bakeryIdx);
+          } catch (err) {
+            showToast('Lỗi mở Xưởng Bánh: ' + err.message, 'error');
+          }
+        }
+
+        document.addEventListener('click', function (e) {
+          if (e.target.closest('#openBakeryGameBtn')) {
+            openBakeryGameSafe();
+          }
+        });
+
+        // IXL Family: Add Child + Select Child + Play as Child
+        document.getElementById('addChildForm').addEventListener('submit', function (e) {
+          e.preventDefault();
+          if (!isParentAccount(currentUser)) return;
+          const uname = document.getElementById('childUsername').value.trim();
+          const pass = document.getElementById('childPassword').value;
+          const byear = parseInt(document.getElementById('childBirthYear').value, 10);
+          if (!uname || uname.length < 2 || !pass || pass.length < 3 || isNaN(byear)) {
+            showToast('Vui lòng nhập đầy đủ tên, mật khẩu (≥3 ký tự) và năm sinh của bé.', 'error');
+            return;
+          }
+          if (usersDb.some(function (u) { return u.username.toLowerCase() === uname.toLowerCase(); })) {
+            showToast('Tên tài khoản "' + uname + '" đã tồn tại.', 'error');
+            return;
+          }
+          const childUser = {
+            id: 'usr_' + Date.now(),
+            username: uname,
+            password: pass,
+            birthYear: byear,
+            role: 'student',
+            parentUsername: currentUser.username,
+            createdAt: new Date().toLocaleDateString('vi-VN'),
+            parentNotes: [],
+            gameProgress: { completedLevels: [], explorerCompleted: [], bakeryCompleted: [], totalAttempts: 0, lastScore: null, logs: [] }
+          };
+          usersDb.push(childUser);
+          safeSetStorage(DB_STORAGE_KEY, usersDb); pushUsersToCloud();
+          selectedChildUsername = childUser.username;
+          document.getElementById('addChildForm').reset();
+          renderAll();
+          showToast('Đã tạo tài khoản Con "' + childUser.username + '"!');
+        });
+
+        document.getElementById('ixlChildrenList').addEventListener('click', function (e) {
+          const selBtn = e.target.closest('[data-select-child]');
+          if (selBtn) {
+            selectedChildUsername = selBtn.getAttribute('data-select-child');
+            renderParentPortal();
+            return;
+          }
+          const playBtn = e.target.closest('[data-play-as-child]');
+          if (playBtn) {
+            const cname = playBtn.getAttribute('data-play-as-child');
+            const cObj = usersDb.find(function (u) { return u.username === cname; });
+            if (cObj) {
+              currentUser = cObj;
+              safeSetStorage(SESSION_STORAGE_KEY, currentUser);
+              switchView('library');
+              showToast('Đang chơi bằng tài khoản của bé "' + cObj.username + '"!');
+            }
+          }
         });
 
         document.getElementById('backFromBakeryBtn').addEventListener('click', function () {
@@ -3024,5 +3152,11 @@
         refreshCloudSyncUi();
         pullUsersFromCloudOrStatic();
         renderAll();
-      });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initApp);
+      } else {
+        initApp();
+      }
     })();
