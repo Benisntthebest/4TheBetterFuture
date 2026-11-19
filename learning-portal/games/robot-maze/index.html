@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Robot Maze — Lập Trình Xe Nhỏ & Scratch</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <!-- HEADER TINH GỌN -->
+    <header class="top-bar">
+      <div class="brand">
+        <span class="brand-icon">🚗</span>
+        <h1>Robot Maze</h1>
+      </div>
+
+      <div class="hud">
+        <div class="pill pill-level" id="levelBadge">Màn <span id="levelNum">1</span>/10</div>
+        <div class="pill pill-star">⭐ <span id="starCount">0</span>/<span id="starTotal">1</span></div>
+        <button class="pill pill-mode" id="btnModeSwitch" title="Chuyển đổi Cơ bản / Scratch">
+          🧩 <span id="modeBadgeText">Cơ Bản</span>
+        </button>
+        <button class="pill pill-car" id="btnGarage" title="Đổi xe trong Gara">
+          🚘 <span id="carTierBadge">Cấp 1</span>
+        </button>
+        <button class="icon-btn" id="btnHelp" title="Cách chơi">❓</button>
+        <button class="icon-btn" id="btnHint" title="Gợi ý đường đi">💡</button>
+        <button class="icon-btn" id="btnSound" title="Âm thanh">🔊</button>
+      </div>
+    </header>
+
+    <!-- KHU VỰC CHƠI CHÍNH -->
+    <main class="play-grid">
+      <section class="board-card">
+        <canvas id="gameCanvas" width="480" height="480"></canvas>
+        <div class="status-bar" id="statusMsg">Xếp các lệnh bên phải rồi bấm CHẠY XE!</div>
+      </section>
+
+      <!-- BẢNG ĐIỀU KHIỂN PHẦN 1: CƠ BẢN (MÀN 1 - 10) -->
+      <section class="control-card" id="basicControlPanel">
+        <div class="block-group">
+          <div class="group-label">1. Hướng di chuyển</div>
+          <div class="dpad">
+            <div></div>
+            <button class="dir-btn" data-dir="UP" aria-label="Đi lên">⬆️</button>
+            <div></div>
+            <button class="dir-btn" data-dir="LEFT" aria-label="Sang trái">⬅️</button>
+            <button class="dir-btn" data-dir="DOWN" aria-label="Đi xuống">⬇️</button>
+            <button class="dir-btn" data-dir="RIGHT" aria-label="Sang phải">➡️</button>
+          </div>
+        </div>
+
+        <div class="block-group">
+          <div class="group-label">
+            <span>2. Vòng lặp Repeat</span>
+            <span class="loop-badge" id="loopRequirement" style="display: none;">Cần dùng Repeat</span>
+          </div>
+          <div class="repeat-row">
+            <select id="repeatCount" aria-label="Số lần lặp">
+              <option value="2">2 lần</option>
+              <option value="3" selected>3 lần</option>
+              <option value="4">4 lần</option>
+              <option value="5">5 lần</option>
+            </select>
+            <select id="repeatDirection" aria-label="Hướng lặp">
+              <option value="UP">⬆️ Lên</option>
+              <option value="DOWN">⬇️ Xuống</option>
+              <option value="LEFT">⬅️ Trái</option>
+              <option value="RIGHT" selected>➡️ Phải</option>
+            </select>
+            <button class="btn-repeat" id="btnRepeat">🔁 Thêm</button>
+          </div>
+        </div>
+
+        <div class="block-group program-group">
+          <div class="group-label">
+            <span>3. Chương trình (<span id="stepCount">0</span>/<span id="maxSteps">6</span> bước)</span>
+            <span class="sub-note">Chạm khối để xóa</span>
+          </div>
+          <div class="queue-area" id="commandQueue"></div>
+        </div>
+
+        <div class="run-row">
+          <button class="btn-run" id="btnRun">▶️ CHẠY XE</button>
+          <button class="btn-clear" id="btnClear">🔄 XÓA</button>
+        </div>
+      </section>
+
+      <!-- BẢNG ĐIỀU KHIỂN PHẦN 2: LẬP TRÌNH KHỐI SCRATCH (MÀN 11+) -->
+      <section class="control-card scratch-panel" id="scratchControlPanel" style="display: none;">
+        <!-- KHAY KHỐI LỆNH SCRATCH -->
+        <div class="scratch-palette-box">
+          <div class="group-label">
+            <span>🧩 Khối Lệnh Scratch</span>
+            <span class="sub-note">Bấm hoặc kéo vào khung dưới</span>
+          </div>
+          <div class="scratch-palette" id="scratchPalette">
+            <div class="sc-pal-item sc-motion" draggable="true" data-sc-type="MOVE" data-dir="UP">⬆️ Lên</div>
+            <div class="sc-pal-item sc-motion" draggable="true" data-sc-type="MOVE" data-dir="DOWN">⬇️ Xuống</div>
+            <div class="sc-pal-item sc-motion" draggable="true" data-sc-type="MOVE" data-dir="LEFT">⬅️ Trái</div>
+            <div class="sc-pal-item sc-motion" draggable="true" data-sc-type="MOVE" data-dir="RIGHT">➡️ Phải</div>
+            <div class="sc-pal-item sc-control" draggable="true" data-sc-type="REPEAT">🔁 Lặp lại 3 lần</div>
+            <div class="sc-pal-item sc-sound" draggable="true" data-sc-type="HONK">📣 Còi Bíp</div>
+          </div>
+        </div>
+
+        <!-- KHU VỰC GHÉP KHỐI SCRATCH -->
+        <div class="scratch-workspace-wrap">
+          <div class="group-label">
+            <span id="scratchTargetIndicator">🎯 Đang ghép vào: Luồng chính</span>
+            <span><span id="scStepCount">0</span>/<span id="scMaxSteps">12</span> bước</span>
+          </div>
+          <div class="scratch-workspace" id="scratchWorkspace">
+            <div class="sc-hat-block" id="scHatBlock">
+              🚩 Khi bấm <strong>CHẠY XE</strong>
+            </div>
+            <div class="sc-script-body" id="scratchMainBody" data-drop-target="main"></div>
+          </div>
+        </div>
+
+        <div class="run-row">
+          <button class="btn-run" id="btnScRun">🚩 CHẠY SCRATCH</button>
+          <button class="btn-clear" id="btnScClear">🔄 XÓA</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- MODAL QUA MÀN THÔNG THƯỜNG -->
+  <div class="overlay" id="winModal">
+    <div class="dialog win-dialog">
+      <div class="dialog-emoji">🎉🏠⭐</div>
+      <h2>Tuyệt Vời!</h2>
+      <p id="winText">Xe đã về nhà an toàn!</p>
+      <button class="btn-primary" id="btnNextLevel">Tiếp Tục ➡️</button>
+    </div>
+  </div>
+
+  <!-- MÀN HÌNH LỚN TẶNG XE KHI NÂNG CẤP -->
+  <div class="overlay gift-fullscreen" id="carGiftOverlay">
+    <div class="gift-stage">
+      <div class="sunburst"></div>
+      <div class="gift-content">
+        <div class="gift-tag">🎁 PHẦN THƯỞNG NÂNG CẤP</div>
+        <h2 id="giftTitle">Chúc Mừng! Bé Được Tặng Xe Mới!</h2>
+        <div class="gift-showcase">
+          <canvas id="giftCarCanvas" width="220" height="220"></canvas>
+        </div>
+        <h3 id="giftCarName">Xe Sedan — Cấp 2</h3>
+        <p id="giftCarPerk">Tốc độ +25% · Dáng trường êm ái</p>
+        <button class="btn-gift-continue" id="btnGiftContinue">TIẾP TỤC HÀNH TRÌNH ➡️</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MÀN HÌNH LỚN MỞ KHÓA CHẾ ĐỘ SCRATCH SAU MÀN 10 -->
+  <div class="overlay gift-fullscreen" id="scratchUnlockOverlay">
+    <div class="gift-stage">
+      <div class="sunburst"></div>
+      <div class="gift-content scratch-unlock-card">
+        <div class="gift-tag">🏆 HOÀN THÀNH 10 MÀN CƠ BẢN</div>
+        <h2>Nâng Cấp Lên Lập Trình Scratch!</h2>
+        <div class="scratch-preview-badge">
+          <div class="sp-hat">🚩 Khi bấm CHẠY XE</div>
+          <div class="sp-loop">🔁 Lặp lại 3 lần
+            <div class="sp-inner">➡️ Sang phải &nbsp;+&nbsp; ⬆️ Đi lên</div>
+          </div>
+        </div>
+        <p>Bé đã mở khóa bộ khối ghép Scratch! Bé có thể lồng nhiều lệnh vào bên trong vòng lặp để giải các mê cung bậc thang siêu khó!</p>
+        <button class="btn-gift-continue" id="btnStartScratchMode">BẮT ĐẦU LẬP TRÌNH SCRATCH 🧩</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CHỌN XE NHANH (GARA) -->
+  <div class="overlay" id="garageModal">
+    <div class="dialog garage-dialog">
+      <h2>🚘 Gara Xe Của Bé</h2>
+      <div class="garage-list" id="garageGrid"></div>
+      <button class="btn-primary" id="btnCloseGarage">Xong</button>
+    </div>
+  </div>
+
+  <!-- MODAL HƯỚNG DẪN CÁCH CHƠI CHO BÉ -->
+  <div class="overlay" id="helpModal">
+    <div class="dialog help-dialog">
+      <h2>📖 Cách Chơi Cho Bé</h2>
+      <div class="help-steps">
+        <div class="help-item">
+          <strong>1. Nhiệm vụ:</strong> Lái xe ăn hết <b>Ngôi Sao ⭐</b> rồi về tới <b>Ngôi Nhà 🏠</b>, tránh đá, vũng nước và bụi cây.
+        </div>
+        <div class="help-item">
+          <strong>2. Phần 1 (Màn 1–10):</strong> Bấm các nút mũi tên ⬆️⬇️⬅️➡️ hoặc <b>Repeat</b> để xếp đường đi, sau đó bấm <b>CHẠY XE</b>. Qua màn 3, 6, 9 bé sẽ được tặng xe mới!
+        </div>
+        <div class="help-item">
+          <strong>3. Phần 2 (Lập trình Scratch):</strong> Ghép các khối màu xanh vào dưới khối <b>🚩 Khi bấm CHẠY XE</b>. Chạm vào khối cam <b>🔁 Lặp lại</b> để lồng nhiều lệnh vào bên trong!
+        </div>
+      </div>
+      <button class="btn-primary" id="btnCloseHelp">Đã Hiểu, Chơi Thôi! 🚀</button>
+    </div>
+  </div>
+
+  <script src="assets.js"></script>
+  <script src="levels.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
