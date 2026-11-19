@@ -1,4 +1,9 @@
 (function () {
+      if (typeof CanvasRenderingContext2D !== 'undefined' && !CanvasRenderingContext2D.prototype.roundRect) {
+        CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h) {
+          this.rect(x, y, w, h);
+        };
+      }
       const DB_STORAGE_KEY = 'edupath_users_db_v1';
       const SESSION_STORAGE_KEY = 'edupath_current_user_v1';
       const REMEMBERED_LOGIN_KEY = 'edupath_remembered_login_v1';
@@ -574,6 +579,11 @@
         } else {
           viewLibrary.classList.remove('hidden');
           navLibraryBtn.className = activeClass;
+          document.getElementById('libraryCatalogSection').classList.remove('hidden');
+          document.getElementById('wasteGameSection').classList.add('hidden');
+          document.getElementById('robotMazeSection').classList.add('hidden');
+          document.getElementById('explorerGameSection').classList.add('hidden');
+          document.getElementById('bakeryGameSection').classList.add('hidden');
         }
 
         renderAll();
@@ -2524,7 +2534,343 @@
           renderExplorerWorlds();
           renderExplorerLevels();
           renderExplorerQueue();
-          updateExplorerLibraryBadge();
+          // --- GAME 4: XƯỞNG BÁNH PHÂN SỐ (FRACTION PIZZA / BAKERY) ---
+        const BAKERY_ORDERS = [
+          {
+            id: 'bak_1', avatar: '👧', customer: 'Bé Minh Anh',
+            prompt: 'Cho mình 1/2 chiếc bánh Pizza nhé!',
+            constraintText: 'Dùng miếng cỡ nào cũng được.',
+            targetNum: 1, targetDen: 2, requiredDen: null, forbiddenDen: null,
+            hint: '1/2 bằng 1 miếng 1/2, hoặc 2 miếng 1/4, hoặc 4 miếng 1/8.'
+          },
+          {
+            id: 'bak_2', avatar: '👦', customer: 'Bạn Gia Bảo',
+            prompt: 'Cho tôi 3/4 chiếc bánh, nhưng CHỈ dùng các miếng cắt cỡ 1/8!',
+            constraintText: '⚠️ Bắt buộc: Chỉ dùng miếng 1/8',
+            targetNum: 3, targetDen: 4, requiredDen: 8, forbiddenDen: null,
+            hint: 'Quy đồng: 3/4 = (3×2)/(4×2) = 6/8. Hãy chọn 6 miếng 1/8!'
+          },
+          {
+            id: 'bak_3', avatar: '👩', customer: 'Cô Lan',
+            prompt: 'Cho cô 4/8 chiếc bánh, nhưng chỉ dùng đúng 1 loại miếng đã rút gọn tối giản!',
+            constraintText: '⚠️ Bắt buộc: Chỉ dùng miếng 1/2 (rút gọn 4/8)',
+            targetNum: 1, targetDen: 2, requiredDen: 2, forbiddenDen: null,
+            hint: 'Rút gọn 4/8 chia cả tử và mẫu cho 4 ta được 1/2!'
+          },
+          {
+            id: 'bak_4', avatar: '🧑‍🚀', customer: 'Phi hành gia Tí',
+            prompt: 'Cho tôi 2/3 chiếc bánh, nhưng chỉ dùng các miếng cắt cỡ 1/6!',
+            constraintText: '⚠️ Bắt buộc: Chỉ dùng miếng 1/6',
+            targetNum: 2, targetDen: 3, requiredDen: 6, forbiddenDen: null,
+            hint: 'Quy đồng: 2/3 = 4/6. Hãy xếp đúng 4 miếng 1/6!'
+          },
+          {
+            id: 'bak_5', avatar: '🦊', customer: 'Cáo Thông Thái',
+            prompt: 'Cho tôi 1/2 chiếc bánh, nhưng chỉ dùng các miếng cắt cỡ 1/6!',
+            constraintText: '⚠️ Bắt buộc: Chỉ dùng miếng 1/6',
+            targetNum: 1, targetDen: 2, requiredDen: 6, forbiddenDen: null,
+            hint: '1/2 = 3/6. Hãy chọn 3 miếng 1/6!'
+          },
+          {
+            id: 'bak_6', avatar: '👵', customer: 'Bà Ngoại',
+            prompt: 'Cho bà 5/6 chiếc bánh (ghép từ 1/2 và các miếng nhỏ hơn nhé)!',
+            constraintText: '⚠️ Không dùng miếng 1/6 — hãy thử kết hợp 1/2 + 1/3!',
+            targetNum: 5, targetDen: 6, requiredDen: null, forbiddenDen: 6,
+            hint: '1/2 + 1/3 = 3/6 + 2/6 = 5/6!'
+          },
+          {
+            id: 'bak_7', avatar: '🤖', customer: 'Robot Bếp Trưởng',
+            prompt: 'Cho tôi 3/4 chiếc bánh, nhưng KHÔNG được dùng miếng 1/4!',
+            constraintText: '⚠️ Cấm dùng miếng 1/4',
+            targetNum: 3, targetDen: 4, requiredDen: null, forbiddenDen: 4,
+            hint: 'Ghép 1 miếng 1/2 (= 2/4) + 2 miếng 1/8 (= 1/4) để được 3/4!'
+          },
+          {
+            id: 'bak_8', avatar: '👑', customer: 'Đơn hàng VIP',
+            prompt: 'Cho tôi 7/8 chiếc bánh từ ít nhất 2 loại miếng cắt khác nhau!',
+            constraintText: '⚠️ Dùng các miếng khác nhau (VD: 1/2 + 1/4 + 1/8)',
+            targetNum: 7, targetDen: 8, requiredDen: null, forbiddenDen: null, minVariety: 2,
+            hint: '1/2 (4/8) + 1/4 (2/8) + 1/8 = 7/8!'
+          }
+        ];
+
+        let bakeryIdx = 0;
+        let bakerySlices = []; // array of denominators, e.g. [8, 8, 4]
+        let bakeryBoxState = 'open'; // 'open' | 'closed' | 'error'
+
+        function gcd(a, b) {
+          return b === 0 ? a : gcd(b, a % b);
+        }
+
+        function sumFractions(denList) {
+          if (denList.length === 0) return { num: 0, den: 1 };
+          const commonDen = 24; // LCM of 2,3,4,6,8,12 is 24
+          let num = 0;
+          denList.forEach(function (d) { num += commonDen / d; });
+          const g = gcd(num, commonDen);
+          return { num: num / g, den: commonDen / g };
+        }
+
+        function getBakeryCompleted() {
+          if (currentUser && currentUser.gameProgress && Array.isArray(currentUser.gameProgress.bakeryCompleted)) {
+            return currentUser.gameProgress.bakeryCompleted;
+          }
+          return [];
+        }
+
+        function updateBakeryLibraryBadge() {
+          const done = getBakeryCompleted().length;
+          const el = document.getElementById('libBakeryProgressText');
+          if (el) el.textContent = done + ' / ' + BAKERY_ORDERS.length;
+        }
+
+        function renderBakeryLevels() {
+          const bar = document.getElementById('bakeryLevelsBar');
+          if (!bar) return;
+          const done = getBakeryCompleted();
+          bar.innerHTML = BAKERY_ORDERS.map(function (ord, idx) {
+            const isDone = done.indexOf(ord.id) !== -1;
+            const isAct = idx === bakeryIdx;
+            return '<button type="button" data-bakery-lvl="' + idx + '" class="px-2.5 py-1 rounded-lg text-xs font-bold transition ' +
+              (isAct ? 'bg-rose-600 text-white' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200') + '">' +
+              (isDone ? '✓ ' : '') + 'Đơn ' + (idx + 1) +
+              '</button>';
+          }).join('');
+        }
+
+        function drawBakeryCanvas() {
+          const canvas = document.getElementById('bakeryCanvas');
+          if (!canvas) return;
+          const ctx = canvas.getContext('2d');
+          const W = canvas.width, H = canvas.height;
+          const cx = W / 2, cy = H / 2, R = 114;
+          const isDark = document.documentElement.classList.contains('dark');
+
+          ctx.clearRect(0, 0, W, H);
+
+          // Cardboard Pizza Box Base
+          ctx.fillStyle = bakeryBoxState === 'error' ? '#fecaca' : (isDark ? '#334155' : '#fde68a');
+          ctx.strokeStyle = bakeryBoxState === 'error' ? '#ef4444' : '#d97706';
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.roundRect(18, 18, W - 36, H - 36, 20);
+          ctx.fill();
+          ctx.stroke();
+
+          // Empty Tray Circle
+          ctx.fillStyle = isDark ? '#1e293b' : '#fffbeb';
+          ctx.beginPath();
+          ctx.arc(cx, cy, R, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#cbd5e1';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          // Draw Pizza Slices inside Box
+          const sliceColors = { 2: '#f43f5e', 3: '#f97316', 4: '#eab308', 6: '#10b981', 8: '#0ea5e9', 12: '#8b5cf6' };
+          let curAngle = -Math.PI / 2;
+
+          bakerySlices.forEach(function (den) {
+            const sweep = (Math.PI * 2) / den;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, R - 4, curAngle, curAngle + sweep);
+            ctx.closePath();
+            ctx.fillStyle = sliceColors[den] || '#f59e0b';
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            // Crust rim
+            ctx.beginPath();
+            ctx.arc(cx, cy, R - 7, curAngle + 0.03, curAngle + sweep - 0.03);
+            ctx.strokeStyle = '#d97706';
+            ctx.lineWidth = 6;
+            ctx.stroke();
+
+            // Fraction Label inside slice
+            const mid = curAngle + sweep / 2;
+            const lx = cx + Math.cos(mid) * (R * 0.6);
+            const ly = cy + Math.sin(mid) * (R * 0.6);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 13px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('1/' + den, lx, ly);
+
+            curAngle += sweep;
+          });
+
+          // If closed successfully, draw translucent lid + stamp
+          if (bakeryBoxState === 'closed') {
+            ctx.fillStyle = 'rgba(16, 185, 129, 0.25)';
+            ctx.beginPath();
+            ctx.roundRect(18, 18, W - 36, H - 36, 20);
+            ctx.fill();
+            ctx.fillStyle = '#059669';
+            ctx.font = 'bold 20px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('✅ ĐÃ ĐÓNG NẮP!', cx, cy);
+          }
+        }
+
+        function renderBakerySlicesUI() {
+          const sum = sumFractions(bakerySlices);
+          const badge = document.getElementById('bakeryCurrentSumBadge');
+          badge.textContent = 'Trong hộp: ' + (sum.num === 0 ? '0' : (sum.den === 1 ? sum.num : sum.num + '/' + sum.den));
+
+          const listEl = document.getElementById('bakerySlicesList');
+          if (bakerySlices.length === 0) {
+            listEl.innerHTML = '<span class="text-xs text-slate-400 italic">Hộp đang trống...</span>';
+          } else {
+            listEl.innerHTML = bakerySlices.map(function (d, idx) {
+              return '<button type="button" data-remove-slice="' + idx + '" class="px-2 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold hover:bg-rose-50">1/' + d + ' ✕</button>';
+            }).join('');
+          }
+          drawBakeryCanvas();
+        }
+
+        function loadBakeryOrder(idx) {
+          bakeryIdx = Math.max(0, Math.min(idx, BAKERY_ORDERS.length - 1));
+          const ord = BAKERY_ORDERS[bakeryIdx];
+          bakerySlices = [];
+          bakeryBoxState = 'open';
+
+          document.getElementById('bakeryOrderTitle').textContent = 'Đơn hàng #' + (bakeryIdx + 1) + ' / ' + BAKERY_ORDERS.length;
+          document.getElementById('bakeryCustomerAvatar').textContent = ord.avatar;
+          document.getElementById('bakeryCustomerName').textContent = ord.customer;
+          document.getElementById('bakeryOrderPrompt').textContent = '“' + ord.prompt + '”';
+          document.getElementById('bakeryOrderConstraint').textContent = ord.constraintText;
+          document.getElementById('bakeryFeedbackMsg').textContent = 'Chọn các miếng bánh bên phải để xếp vào hộp.';
+          document.getElementById('bakeryFeedbackMsg').className = 'text-xs font-semibold text-center text-slate-500 dark:text-slate-400 min-h-[20px]';
+          document.getElementById('bakeryNextBtn').classList.add('hidden');
+
+          renderBakeryLevels();
+          renderBakerySlicesUI();
+        }
+
+        document.getElementById('openBakeryGameBtn').addEventListener('click', function () {
+          document.getElementById('libraryCatalogSection').classList.add('hidden');
+          document.getElementById('bakeryGameSection').classList.remove('hidden');
+          loadBakeryOrder(bakeryIdx);
+        });
+
+        document.getElementById('backFromBakeryBtn').addEventListener('click', function () {
+          document.getElementById('bakeryGameSection').classList.add('hidden');
+          document.getElementById('libraryCatalogSection').classList.remove('hidden');
+          updateBakeryLibraryBadge();
+        });
+
+        document.getElementById('bakeryLevelsBar').addEventListener('click', function (e) {
+          const btn = e.target.closest('[data-bakery-lvl]');
+          if (btn) loadBakeryOrder(parseInt(btn.getAttribute('data-bakery-lvl'), 10));
+        });
+
+        document.querySelectorAll('[data-slice-den]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            if (bakeryBoxState === 'closed') return;
+            bakeryBoxState = 'open';
+            const den = parseInt(btn.getAttribute('data-slice-den'), 10);
+            const nextSum = sumFractions(bakerySlices.concat([den]));
+            if (nextSum.num / nextSum.den > 1.0001) {
+              playSfx('wrong');
+              bakeryBoxState = 'error';
+              document.getElementById('bakeryFeedbackMsg').textContent = '💥 Quá đầy (> 1 chiếc bánh)! Hộp không thể đóng nắp!';
+              document.getElementById('bakeryFeedbackMsg').className = 'text-xs font-bold text-center text-rose-600 min-h-[20px]';
+              drawBakeryCanvas();
+              return;
+            }
+            bakerySlices.push(den);
+            playSfx('tick');
+            renderBakerySlicesUI();
+          });
+        });
+
+        document.getElementById('bakerySlicesList').addEventListener('click', function (e) {
+          const btn = e.target.closest('[data-remove-slice]');
+          if (!btn || bakeryBoxState === 'closed') return;
+          bakerySlices.splice(parseInt(btn.getAttribute('data-remove-slice'), 10), 1);
+          bakeryBoxState = 'open';
+          renderBakerySlicesUI();
+        });
+
+        document.getElementById('bakeryUndoBtn').addEventListener('click', function () {
+          if (bakeryBoxState === 'closed' || bakerySlices.length === 0) return;
+          bakerySlices.pop();
+          bakeryBoxState = 'open';
+          renderBakerySlicesUI();
+        });
+
+        document.getElementById('bakeryClearBtn').addEventListener('click', function () {
+          bakerySlices = [];
+          bakeryBoxState = 'open';
+          document.getElementById('bakeryFeedbackMsg').textContent = 'Đã dọn sạch hộp bánh.';
+          renderBakerySlicesUI();
+        });
+
+        document.getElementById('bakeryHintBtn').addEventListener('click', function () {
+          const ord = BAKERY_ORDERS[bakeryIdx];
+          if (ord) showToast('💡 Gợi ý: ' + ord.hint, 'info');
+        });
+
+        document.getElementById('bakeryDeliverBtn').addEventListener('click', function () {
+          const ord = BAKERY_ORDERS[bakeryIdx];
+          const sum = sumFractions(bakerySlices);
+          const msgEl = document.getElementById('bakeryFeedbackMsg');
+
+          const sumMatches = (sum.num === ord.targetNum && sum.den === ord.targetDen);
+          const reqOk = !ord.requiredDen || (bakerySlices.length > 0 && bakerySlices.every(function (d) { return d === ord.requiredDen; }));
+          const forbOk = !ord.forbiddenDen || bakerySlices.every(function (d) { return d !== ord.forbiddenDen; });
+          const varOk = !ord.minVariety || (new Set(bakerySlices).size >= ord.minVariety);
+
+          if (sumMatches && reqOk && forbOk && varOk) {
+            bakeryBoxState = 'closed';
+            playSfx('win');
+            msgEl.textContent = '🎉 Chính xác! Nắp hộp đã đóng khít, giao bánh thành công!';
+            msgEl.className = 'text-xs font-bold text-center text-emerald-600 min-h-[20px]';
+            if (bakeryIdx < BAKERY_ORDERS.length - 1) {
+              document.getElementById('bakeryNextBtn').classList.remove('hidden');
+            }
+            drawBakeryCanvas();
+
+            if (currentUser) {
+              if (!currentUser.gameProgress) currentUser.gameProgress = { completedLevels: [], explorerCompleted: [], bakeryCompleted: [], totalAttempts: 0, lastScore: null, logs: [] };
+              if (!Array.isArray(currentUser.gameProgress.bakeryCompleted)) currentUser.gameProgress.bakeryCompleted = [];
+              if (currentUser.gameProgress.bakeryCompleted.indexOf(ord.id) === -1) {
+                currentUser.gameProgress.bakeryCompleted.push(ord.id);
+              }
+              currentUser.gameProgress.totalAttempts = (currentUser.gameProgress.totalAttempts || 0) + 1;
+              currentUser.gameProgress.lastScore = '🍕 Xưởng Bánh Đơn #' + (bakeryIdx + 1);
+              safeSetStorage(DB_STORAGE_KEY, usersDb); pushUsersToCloud();
+              safeSetStorage(SESSION_STORAGE_KEY, currentUser);
+              renderBakeryLevels();
+              updateBakeryLibraryBadge();
+              renderParentPortal();
+            }
+          } else {
+            bakeryBoxState = 'error';
+            playSfx('wrong');
+            if (!sumMatches) {
+              msgEl.textContent = '❌ Nắp hộp không đóng được! Tổng hiện tại là ' + (sum.num === 0 ? '0' : sum.num + '/' + sum.den) + ', khách cần ' + ord.targetNum + '/' + ord.targetDen + '.';
+            } else if (!reqOk) {
+              msgEl.textContent = '❌ Sai cỡ miếng! Khách yêu cầu chỉ dùng miếng 1/' + ord.requiredDen + '.';
+            } else if (!forbOk) {
+              msgEl.textContent = '❌ Không được dùng miếng 1/' + ord.forbiddenDen + ' ở đơn này!';
+            } else {
+              msgEl.textContent = '❌ Hãy ghép từ ít nhất ' + ord.minVariety + ' loại miếng cắt khác nhau!';
+            }
+            msgEl.className = 'text-xs font-bold text-center text-rose-600 min-h-[20px]';
+            drawBakeryCanvas();
+          }
+        });
+
+        document.getElementById('bakeryNextBtn').addEventListener('click', function () {
+          if (bakeryIdx < BAKERY_ORDERS.length - 1) loadBakeryOrder(bakeryIdx + 1);
+        });
+
+        updateBakeryLibraryBadge();
+        updateExplorerLibraryBadge();
           drawExplorerCanvas();
         }
 
