@@ -1,7 +1,8 @@
-# Web Skeleton — Trang trắng, Tài khoản (User/Pass/Năm sinh) & GUI Phụ huynh
+# 4TheBetterFuture
 
-## Cấu trúc file gọn nhẹ (Thuần HTML/CSS/JS)
-- `index.html`: Giao diện trang web (Trang trắng + Đăng nhập/Đăng ký + Khung GUI Phụ huynh theo dõi tiến độ + Bảng Database).
-- `css/style.css`: Định dạng giao diện.
-- `js/app.js`: Xử lý đăng ký/đăng nhập (`username`, `password`, `birthYear`), lưu Database vào `localStorage` và xuất file `database.json`.
-- `data/database.json`: File cấu trúc dữ liệu mẫu.
+## Tính năng tích hợp
+- **Trang chính (Blank Page)**: Khung trang trắng sẵn sàng phát triển nội dung.
+- **Đăng nhập / Đăng ký & Database**: Lưu `username`, `password`, `birthYear` và `role` vào `localStorage` (có xuất `database.json`).
+- **Tài khoản Admin mặc định**: `Admin` / `xhauwfihf09124` — chỉ tài khoản Admin mới xem được tab Database, bật/tắt ẩn hiện mật khẩu và cấp quyền Admin cho tài khoản khác.
+- **Dark / Light Mode**: Nút chuyển giao diện Sáng / Tối ngay trên thanh điều hướng.
+- **Khu vực Phụ huynh (GUI)**: Giao diện theo dõi tiến độ dựng sẵn.
