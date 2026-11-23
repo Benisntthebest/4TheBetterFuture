@@ -374,6 +374,13 @@
                 await pushUsersToCloud();
               }
             }
+            const resLessons = await fetch(url + '/edupath_lesson_contents.json');
+            if (resLessons.ok) {
+              const lData = await resLessons.json();
+              if (lData && typeof lData === 'object') {
+                safeSetStorage('edupath_lesson_contents_v1', lData);
+              }
+            }
             const resLvl = await fetch(url + '/edupath_waste_levels.json');
             if (resLvl.ok) {
               const lvlData = await resLvl.json();
@@ -547,19 +554,26 @@
         syncCurrentUser();
         if (viewName === 'db' && !isAdmin(currentUser)) {
           showToast('Chỉ tài khoản Admin mới có quyền truy cập mục này.', 'error');
-          viewName = 'library';
+          viewName = 'roadmap';
+        }
+        if (viewName === 'parent' && !(isParentAccount(currentUser) || isAdmin(currentUser))) {
+          showToast('Chỉ tài khoản Phụ huynh (hoặc Admin) mới xem được mục này.', 'error');
+          viewName = 'roadmap';
         }
         currentView = viewName;
 
         const viewLibrary = document.getElementById('viewLibrary');
+        const viewRoadmapLibrary = document.getElementById('viewRoadmapLibrary');
         const viewParent = document.getElementById('viewParent');
         const viewDb = document.getElementById('viewDb');
 
         const navLibraryBtn = document.getElementById('navLibraryBtn');
+        const navRoadmapLibraryBtn = document.getElementById('navRoadmapLibraryBtn');
         const navParentBtn = document.getElementById('navParentBtn');
         const navDbBtn = document.getElementById('navDbBtn');
 
         viewLibrary.classList.add('hidden');
+        if (viewRoadmapLibrary) viewRoadmapLibrary.classList.add('hidden');
         viewParent.classList.add('hidden');
         viewDb.classList.add('hidden');
 
@@ -567,7 +581,8 @@
         const activeClass = 'px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white';
 
         navLibraryBtn.className = inactiveClass;
-        navParentBtn.className = inactiveClass;
+        if (navRoadmapLibraryBtn) navRoadmapLibraryBtn.className = inactiveClass;
+        navParentBtn.className = ((isParentAccount(currentUser) || isAdmin(currentUser)) ? '' : 'hidden ') + inactiveClass;
         navDbBtn.className = (isAdmin(currentUser) ? '' : 'hidden ') + inactiveClass;
 
         if (viewName === 'parent') {
@@ -576,6 +591,14 @@
         } else if (viewName === 'db') {
           viewDb.classList.remove('hidden');
           navDbBtn.className = activeClass;
+        } else if (viewName === 'roadmap') {
+          if (viewRoadmapLibrary) viewRoadmapLibrary.classList.remove('hidden');
+          if (navRoadmapLibraryBtn) navRoadmapLibraryBtn.className = activeClass;
+          const rList = document.getElementById('roadmapListContainer');
+          const rLesson = document.getElementById('roadmapLessonView');
+          if (rList) rList.classList.remove('hidden');
+          if (rLesson) rLesson.classList.add('hidden');
+          if (typeof renderPythonRoadmap === 'function') renderPythonRoadmap();
         } else {
           viewLibrary.classList.remove('hidden');
           navLibraryBtn.className = activeClass;
@@ -596,10 +619,15 @@
 
         const navDbBtn = document.getElementById('navDbBtn');
         if (navDbBtn) {
-          if (isAdmin(currentUser)) {
-            navDbBtn.classList.remove('hidden');
-          } else {
-            navDbBtn.classList.add('hidden');
+          if (isAdmin(currentUser)) navDbBtn.classList.remove('hidden');
+          else navDbBtn.classList.add('hidden');
+        }
+        const navParentBtnVis = document.getElementById('navParentBtn');
+        if (navParentBtnVis) {
+          if (isParentAccount(currentUser) || isAdmin(currentUser)) navParentBtnVis.classList.remove('hidden');
+          else {
+            navParentBtnVis.classList.add('hidden');
+            if (currentView === 'parent') switchView('roadmap');
           }
         }
 
@@ -1852,9 +1880,10 @@
         document.getElementById('brandHomeBtn').addEventListener('click', function () {
           document.getElementById('wasteGameSection').classList.add('hidden');
           document.getElementById('libraryCatalogSection').classList.remove('hidden');
-          switchView('library');
+          switchView('roadmap');
         });
         document.getElementById('navLibraryBtn').addEventListener('click', function () { switchView('library'); });
+        document.getElementById('navRoadmapLibraryBtn').addEventListener('click', function () { switchView('roadmap'); });
         document.getElementById('navParentBtn').addEventListener('click', function () { switchView('parent'); });
         document.getElementById('navDbBtn').addEventListener('click', function () { switchView('db'); });
 
@@ -3149,9 +3178,433 @@
         });
 
         updateExplorerLibraryBadge();
+        // --- LIBRARY: PYTHON CƠ BẢN (LỚP 6-9) ROADMAP (VNOI TEMPLATE, DIFFICULTY <= 2) ---
+        const PYTHON_ROADMAP_CHAPTERS = [
+          {
+            id: 'ch1',
+            num: 1,
+            title: 'Khái niệm cơ bản & Làm quen Python',
+            items: [
+              { id: 'py_1', title: 'Biến, Kiểu dữ liệu & Nhập xuất (input / print)', desc: 'Làm quen int, float, str, bool và cách đọc dữ liệu từ bàn phím trong Python.', diff: 1, snippet: 'ten = input("Tên bạn: ")\ntuoi = int(input())\nprint(f"Chào {ten}, {tuoi} tuổi")' },
+              { id: 'py_2', title: 'Câu lệnh rẽ nhánh (if / elif / else)', desc: 'So sánh, toán tử logic (and, or, not) và chia trường hợp xử lý.', diff: 1, snippet: 'n = int(input())\nif n % 2 == 0:\n    print("Số chẵn")\nelse:\n    print("Số lẻ")' },
+              { id: 'py_3', title: 'Vòng lặp (for, while, range)', desc: 'Lặp qua dãy số, tính tổng, đếm điều kiện và dùng break / continue.', diff: 1, snippet: 'tong = 0\nfor i in range(1, 11):\n    tong += i\nprint(tong)' },
+              { id: 'py_4', title: 'Hàm (def) & Chia nhỏ bài toán', desc: 'Viết hàm tái sử dụng code và trả về kết quả bằng return.', diff: 1, snippet: 'def dien_tich_hcn(a, b):\n    return a * b' }
+            ]
+          },
+          {
+            id: 'ch2',
+            num: 2,
+            title: 'Thuật toán cơ bản (Phần 1)',
+            items: [
+              { id: 'py_5', title: 'Tầm quan trọng của Thuật toán & Big-O cơ bản', desc: 'Ước lượng số phép tính (O(n), O(n²)) để tránh chạy quá thời gian.', diff: 1, snippet: '# Với n <= 10^5 nên dùng O(n) hoặc O(n log n)' },
+              { id: 'py_6', title: 'Brute Force (Duyệt tất cả khả năng)', desc: 'Thử toàn bộ các trường hợp hợp lệ bằng vòng lặp lồng nhau đơn giản.', diff: 1, snippet: 'for x in range(1, n + 1):\n    if n % x == 0:\n        print(x)' },
+              { id: 'py_7', title: 'Đệ quy (Recursion) cơ bản', desc: 'Hàm tự gọi lại chính nó với bài toán nhỏ hơn (giai thừa, Fibonacci).', diff: 2, snippet: 'def giaithua(n):\n    if n <= 1: return 1\n    return n * giaithua(n - 1)' }
+            ]
+          },
+          {
+            id: 'ch3',
+            num: 3,
+            title: 'Danh sách (List), Xâu (String) & Sắp xếp',
+            items: [
+              { id: 'py_8', title: 'Danh sách (List) & Mảng 1 chiều', desc: 'Lưu trữ dãy số, tìm min/max, cắt lát (slicing) và duyệt phần tử.', diff: 1, snippet: 'a = [3, 7, 2, 9]\nprint(max(a), sum(a))' },
+              { id: 'py_9', title: 'Xử lý Xâu ký tự (String)', desc: 'Đếm ký tự, đảo ngược xâu (s[::-1]), kiểm tra đối xứng (Palindrome).', diff: 1, snippet: 's = input().strip()\nprint(s == s[::-1])' },
+              { id: 'py_10', title: 'Sắp xếp cơ bản (sort / sorted)', desc: 'Sắp xếp tăng dần, giảm dần (reverse=True) và theo tiêu chí (key=).', diff: 1, snippet: 'a = [5, 1, 4, 2]\na.sort()' },
+              { id: 'py_11', title: 'Tìm kiếm nhị phân (Binary Search) cơ bản', desc: 'Tìm vị trí phần tử trên dãy đã sắp xếp trong O(log n) hoặc dùng bisect.', diff: 2, snippet: 'import bisect\npos = bisect.bisect_left(a, x)' }
+            ]
+          },
+          {
+            id: 'ch4',
+            num: 4,
+            title: 'Lý thuyết số cơ bản',
+            items: [
+              { id: 'py_12', title: 'Ước chung lớn nhất (GCD) & Bội chung nhỏ nhất (LCM)', desc: 'Thuật toán Euclid và dùng hàm math.gcd(a, b) có sẵn trong Python.', diff: 1, snippet: 'import math\ng = math.gcd(12, 18)' },
+              { id: 'py_13', title: 'Số nguyên tố & Phân tích thừa số nguyên tố', desc: 'Kiểm tra số nguyên tố bằng vòng lặp tới căn bậc hai √n.', diff: 2, snippet: 'def is_prime(n):\n    if n < 2: return False\n    for i in range(2, int(n**0.5) + 1):\n        if n % i == 0: return False\n    return True' },
+              { id: 'py_14', title: 'Sàng Eratosthenes cơ bản', desc: 'Tìm nhanh tất cả các số nguyên tố từ 1 đến N.', diff: 2, snippet: 'prime = [True] * (n + 1)' }
+            ]
+          },
+          {
+            id: 'ch5',
+            num: 5,
+            title: 'Cấu trúc dữ liệu cơ bản (Độ khó 1–2)',
+            items: [
+              { id: 'py_15', title: 'Tổng quan về cấu trúc dữ liệu (list, set, dict)', desc: 'Giới thiệu các loại cấu trúc dữ liệu trong Python và khi nào nên dùng loại nào.', diff: 1, snippet: 'dem = {} # dict đếm tần suất O(1)' },
+              { id: 'py_16', title: 'Ngăn xếp (Stack)', desc: 'LIFO (Vào sau ra trước). Ứng dụng: kiểm tra ngoặc đúng, đảo ngược dãy.', diff: 1, snippet: 'stack = []\nstack.append(10)\ntop = stack.pop()' },
+              { id: 'py_17', title: 'Hàng đợi (Queue)', desc: 'FIFO (Vào trước ra trước). Ứng dụng: xử lý theo thứ tự đến, BFS cơ bản.', diff: 1, snippet: 'from collections import deque\nq = deque()\nq.append(1); q.popleft()' },
+              { id: 'py_18', title: 'Mảng cộng dồn (Prefix Sum)', desc: 'Tính tổng đoạn [L, R] nhanh trong O(1) sau khi chuẩn bị mảng cộng dồn.', diff: 1, snippet: 'pref = [0] * (n + 1)\n# Tổng [l..r] = pref[r] - pref[l-1]' },
+              { id: 'py_19', title: 'Deque (Hàng đợi hai đầu)', desc: 'Thêm/xóa hai đầu trong O(1), ứng dụng cửa sổ trượt (Sliding Window).', diff: 2, snippet: 'from collections import deque\nd = deque([1, 2, 3])\nd.appendleft(0)' },
+              { id: 'py_20', title: 'Hàng đợi ưu tiên (Priority Queue / Heap)', desc: 'Dùng thư viện heapq để lấy phần tử nhỏ nhất trong O(log n).', diff: 2, snippet: 'import heapq\nh = []\nheapq.heappush(h, 5)\nmn = heapq.heappop(h)' }
+            ]
+          }
+        ];
+
+        let rmDifficultyFilter = 'all';
+        let rmHideDone = false;
+        const expandedSnippets = new Set();
+
+        function getRoadmapDoneSet() {
+          if (currentUser && currentUser.roadmapProgress && Array.isArray(currentUser.roadmapProgress)) {
+            return currentUser.roadmapProgress;
+          }
+          try {
+            return JSON.parse(localStorage.getItem('edupath_guest_roadmap_v1') || '[]');
+          } catch (e) {
+            return [];
+          }
+        }
+
+        function toggleRoadmapItem(itemId) {
+          let list = getRoadmapDoneSet().slice();
+          const idx = list.indexOf(itemId);
+          if (idx === -1) list.push(itemId);
+          else list.splice(idx, 1);
+
+          if (currentUser) {
+            currentUser.roadmapProgress = list;
+            safeSetStorage(DB_STORAGE_KEY, usersDb); pushUsersToCloud();
+            safeSetStorage(SESSION_STORAGE_KEY, currentUser);
+          } else {
+            try { localStorage.setItem('edupath_guest_roadmap_v1', JSON.stringify(list)); } catch (e) {}
+          }
+          renderPythonRoadmap();
+        }
+
+        function renderDiffDots(diff) {
+          let dots = '';
+          for (let i = 1; i <= 5; i++) {
+            dots += '<span class="inline-block w-2 h-2 rounded-full ' + (i <= diff ? 'bg-amber-400' : 'bg-slate-300 dark:bg-slate-700') + '"></span>';
+          }
+          return '<div class="flex items-center gap-1 shrink-0" title="Độ khó ' + diff + '/5">' + dots + '</div>';
+        }
+
+        function renderPythonRoadmap() {
+          const container = document.getElementById('pythonRoadmapChapters');
+          if (!container) return;
+          const doneList = getRoadmapDoneSet();
+
+          let totalCount = 0;
+          let doneCount = 0;
+          PYTHON_ROADMAP_CHAPTERS.forEach(function (ch) {
+            ch.items.forEach(function (it) {
+              totalCount++;
+              if (doneList.indexOf(it.id) !== -1) doneCount++;
+            });
+          });
+
+          const pct = totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0;
+          document.getElementById('roadmapProgressCount').textContent = doneCount + ' / ' + totalCount + ' bài';
+          document.getElementById('roadmapProgressBar').style.width = pct + '%';
+
+          container.innerHTML = PYTHON_ROADMAP_CHAPTERS.map(function (ch) {
+            const visibleItems = ch.items.filter(function (it) {
+              if (rmDifficultyFilter !== 'all' && String(it.diff) !== rmDifficultyFilter) return false;
+              if (rmHideDone && doneList.indexOf(it.id) !== -1) return false;
+              return true;
+            });
+            if (visibleItems.length === 0) return '';
+
+            const chDone = ch.items.filter(function (it) { return doneList.indexOf(it.id) !== -1; }).length;
+            const rowsHtml = visibleItems.map(function (it) {
+              const isDone = doneList.indexOf(it.id) !== -1;
+              const isOpen = expandedSnippets.has(it.id);
+              return (
+                '<div class="border-t border-slate-100 dark:border-slate-800 px-4 sm:px-5 py-3.5 hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition">' +
+                  '<div class="flex items-start justify-between gap-3">' +
+                    '<div class="flex items-start gap-3 flex-1 min-w-0">' +
+                      '<button type="button" data-rm-toggle="' + it.id + '" class="mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition ' +
+                        (isDone ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-slate-300 dark:border-slate-600 hover:border-indigo-500') + '">' +
+                        (isDone ? '<span class="text-[11px] font-bold">✓</span>' : '') +
+                      '</button>' +
+                      '<div class="min-w-0 flex-1">' +
+                        '<button type="button" data-rm-expand="' + it.id + '" class="text-left w-full group">' +
+                          '<p class="font-semibold text-sm ' + (isDone ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400') + '">' +
+                            escapeHtml(it.title) + ' <span class="text-[11px] text-slate-400 font-normal">↗</span>' +
+                          '</p>' +
+                          '<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">' + escapeHtml(it.desc) + '</p>' +
+                        '</button>' +
+                        (isOpen ? '<pre class="mt-2.5 p-3 rounded-xl bg-slate-900 text-emerald-300 text-xs font-mono overflow-x-auto">' + escapeHtml(it.snippet) + '</pre>' : '') +
+                      '</div>' +
+                    '</div>' +
+                    renderDiffDots(it.diff) +
+                  '</div>' +
+                '</div>'
+              );
+            }).join('');
+
+            return (
+              '<div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xs">' +
+                '<div class="px-4 sm:px-5 py-3.5 bg-slate-50/80 dark:bg-slate-800/50 flex items-center justify-between gap-2">' +
+                  '<div class="flex items-center gap-2.5">' +
+                    '<span class="w-6 h-6 rounded-lg bg-indigo-600 text-white text-xs font-bold flex items-center justify-center">' + ch.num + '</span>' +
+                    '<h2 class="font-bold text-sm sm:text-base text-slate-900 dark:text-white">' + escapeHtml(ch.title) + '</h2>' +
+                  '</div>' +
+                  '<span class="text-xs font-semibold text-slate-500 dark:text-slate-400">' + chDone + '/' + ch.items.length + '</span>' +
+                '</div>' +
+                '<div>' + rowsHtml + '</div>' +
+              '</div>'
+            );
+          }).join('');
+        }
+
+        let activeLessonId = null;
+
+        function getLessonContentsMap() {
+          return safeGetStorage('edupath_lesson_contents_v1', {});
+        }
+
+        async function pushLessonContentsToCloud(map) {
+          const url = getCloudUrl();
+          if (!url) return;
+          try {
+            await fetch(url + '/edupath_lesson_contents.json', {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(map)
+            });
+          } catch (err) {}
+        }
+
+        function getAllRoadmapItemsFlat() {
+          const flat = [];
+          PYTHON_ROADMAP_CHAPTERS.forEach(function (ch) {
+            ch.items.forEach(function (it) {
+              flat.push({ ch: ch, item: it });
+            });
+          });
+          return flat;
+        }
+
+        function getDefaultLessonMarkdown(ch, it) {
+          return (
+            '## ' + it.title + '\n\n' +
+            it.desc + '\n\n' +
+            '> **Mục tiêu bài học:** Nắm vững khái niệm cốt lõi và chạy thử đoạn code mẫu bên dưới.\n\n' +
+            '### Ví dụ Python mẫu\n\n' +
+            '```python\n' + it.snippet + '\n```\n\n' +
+            '### Bài tập thực hành nhanh\n' +
+            '- Tự thay đổi giá trị đầu vào trong đoạn code mẫu và dự đoán kết quả.\n' +
+            '- Ghi chú lại những điểm cần nhớ trước khi chuyển sang bài tiếp theo.'
+          );
+        }
+
+        function renderMarkdownToHtml(md) {
+          const lines = String(md || '').replace(/\r\n/g, '\n').split('\n');
+          let out = '';
+          let inCode = false;
+          let codeBuf = [];
+          let inList = false;
+
+          function fmtInline(txt) {
+            let s = escapeHtml(txt);
+            s = s.replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-indigo-600 dark:text-indigo-300 font-mono text-xs">$1</code>');
+            s = s.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-slate-900 dark:text-white">$1</strong>');
+            s = s.replace(/\*([^*]+)\*/g, '<em class="italic">$1</em>');
+            return s;
+          }
+
+          lines.forEach(function (line) {
+            if (line.trim().startsWith('```')) {
+              if (inList) { out += '</ul>'; inList = false; }
+              if (!inCode) {
+                inCode = true;
+                codeBuf = [];
+              } else {
+                out += '<pre class="p-4 rounded-xl bg-slate-900 text-emerald-300 text-xs sm:text-sm font-mono overflow-x-auto my-3"><code>' + escapeHtml(codeBuf.join('\n')) + '</code></pre>';
+                inCode = false;
+              }
+              return;
+            }
+            if (inCode) {
+              codeBuf.push(line);
+              return;
+            }
+            const trimmed = line.trim();
+            if (!trimmed) {
+              if (inList) { out += '</ul>'; inList = false; }
+              return;
+            }
+            if (trimmed.startsWith('### ')) {
+              if (inList) { out += '</ul>'; inList = false; }
+              out += '<h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white pt-2">' + fmtInline(trimmed.slice(4)) + '</h3>';
+            } else if (trimmed.startsWith('## ')) {
+              if (inList) { out += '</ul>'; inList = false; }
+              out += '<h2 class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white pt-2 border-b border-slate-100 dark:border-slate-800 pb-1.5">' + fmtInline(trimmed.slice(3)) + '</h2>';
+            } else if (trimmed.startsWith('# ')) {
+              if (inList) { out += '</ul>'; inList = false; }
+              out += '<h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white">' + fmtInline(trimmed.slice(2)) + '</h1>';
+            } else if (trimmed.startsWith('> ')) {
+              if (inList) { out += '</ul>'; inList = false; }
+              out += '<blockquote class="border-l-4 border-indigo-500 bg-indigo-50/60 dark:bg-indigo-950/40 px-4 py-2.5 rounded-r-xl text-xs sm:text-sm text-slate-700 dark:text-slate-200">' + fmtInline(trimmed.slice(2)) + '</blockquote>';
+            } else if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+              if (!inList) { out += '<ul class="list-disc pl-5 space-y-1.5">'; inList = true; }
+              out += '<li>' + fmtInline(trimmed.slice(2)) + '</li>';
+            } else {
+              if (inList) { out += '</ul>'; inList = false; }
+              out += '<p>' + fmtInline(trimmed) + '</p>';
+            }
+          });
+          if (inList) out += '</ul>';
+          if (inCode) {
+            out += '<pre class="p-4 rounded-xl bg-slate-900 text-emerald-300 text-xs font-mono overflow-x-auto"><code>' + escapeHtml(codeBuf.join('\n')) + '</code></pre>';
+          }
+          return out;
+        }
+
+        function openLessonPage(itemId) {
+          const flat = getAllRoadmapItemsFlat();
+          const idx = flat.findIndex(function (x) { return x.item.id === itemId; });
+          if (idx === -1) return;
+          activeLessonId = itemId;
+          const entry = flat[idx];
+          const ch = entry.ch;
+          const it = entry.item;
+
+          document.getElementById('roadmapListContainer').classList.add('hidden');
+          document.getElementById('roadmapLessonView').classList.remove('hidden');
+          document.getElementById('lessonEditorPane').classList.add('hidden');
+          document.getElementById('lessonReaderPane').classList.remove('hidden');
+
+          document.getElementById('lessonChapterBadge').textContent = 'Chặng ' + ch.num + ' • ' + ch.title;
+          document.getElementById('lessonDiffDots').innerHTML = renderDiffDots(it.diff);
+          document.getElementById('lessonPageTitle').textContent = it.title;
+
+          const doneList = getRoadmapDoneSet();
+          const isDone = doneList.indexOf(it.id) !== -1;
+          const doneBtn = document.getElementById('lessonToggleDoneBtn');
+          doneBtn.textContent = isDone ? '✓ Đã hoàn thành' : '○ Đánh dấu Hoàn thành';
+          doneBtn.className = isDone
+            ? 'px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 text-white transition'
+            : 'px-3.5 py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition';
+
+          const editBtn = document.getElementById('lessonEditAdminBtn');
+          if (isAdmin(currentUser)) editBtn.classList.remove('hidden');
+          else editBtn.classList.add('hidden');
+
+          const customMap = getLessonContentsMap();
+          const md = customMap[it.id] || getDefaultLessonMarkdown(ch, it);
+          document.getElementById('lessonRenderedBody').innerHTML = renderMarkdownToHtml(md);
+
+          document.getElementById('lessonPrevBtn').disabled = (idx === 0);
+          document.getElementById('lessonPrevBtn').classList.toggle('opacity-40', idx === 0);
+          document.getElementById('lessonNextBtn').disabled = (idx === flat.length - 1);
+          document.getElementById('lessonNextBtn').classList.toggle('opacity-40', idx === flat.length - 1);
+        }
+
+        document.getElementById('pythonRoadmapChapters').addEventListener('click', function (e) {
+          const togBtn = e.target.closest('[data-rm-toggle]');
+          if (togBtn) {
+            toggleRoadmapItem(togBtn.getAttribute('data-rm-toggle'));
+            return;
+          }
+          const expBtn = e.target.closest('[data-rm-expand]');
+          if (expBtn) {
+            openLessonPage(expBtn.getAttribute('data-rm-expand'));
+          }
+        });
+
+        document.getElementById('backToRoadmapBtn').addEventListener('click', function () {
+          document.getElementById('roadmapLessonView').classList.add('hidden');
+          document.getElementById('roadmapListContainer').classList.remove('hidden');
+          renderPythonRoadmap();
+        });
+
+        document.getElementById('lessonToggleDoneBtn').addEventListener('click', function () {
+          if (!activeLessonId) return;
+          toggleRoadmapItem(activeLessonId);
+          openLessonPage(activeLessonId);
+        });
+
+        document.getElementById('lessonPrevBtn').addEventListener('click', function () {
+          const flat = getAllRoadmapItemsFlat();
+          const idx = flat.findIndex(function (x) { return x.item.id === activeLessonId; });
+          if (idx > 0) openLessonPage(flat[idx - 1].item.id);
+        });
+
+        document.getElementById('lessonNextBtn').addEventListener('click', function () {
+          const flat = getAllRoadmapItemsFlat();
+          const idx = flat.findIndex(function (x) { return x.item.id === activeLessonId; });
+          if (idx >= 0 && idx < flat.length - 1) openLessonPage(flat[idx + 1].item.id);
+        });
+
+        // HackMD Split-Screen Editor Handlers (Admin Only)
+        document.getElementById('lessonEditAdminBtn').addEventListener('click', function () {
+          if (!isAdmin(currentUser) || !activeLessonId) return;
+          const flat = getAllRoadmapItemsFlat();
+          const entry = flat.find(function (x) { return x.item.id === activeLessonId; });
+          if (!entry) return;
+          const customMap = getLessonContentsMap();
+          const currentMd = customMap[activeLessonId] || getDefaultLessonMarkdown(entry.ch, entry.item);
+
+          document.getElementById('lessonReaderPane').classList.add('hidden');
+          document.getElementById('lessonEditorPane').classList.remove('hidden');
+          const inp = document.getElementById('lessonMdInput');
+          inp.value = currentMd;
+          document.getElementById('lessonMdPreview').innerHTML = renderMarkdownToHtml(currentMd);
+        });
+
+        document.getElementById('lessonMdInput').addEventListener('input', function () {
+          document.getElementById('lessonMdPreview').innerHTML = renderMarkdownToHtml(this.value);
+        });
+
+        document.querySelectorAll('[data-md-tool]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            const tool = btn.getAttribute('data-md-tool');
+            const inp = document.getElementById('lessonMdInput');
+            const start = inp.selectionStart;
+            const end = inp.selectionEnd;
+            const sel = inp.value.slice(start, end) || 'nội dung';
+            let insert = sel;
+            if (tool === 'h2') insert = '\n## ' + sel;
+            else if (tool === 'bold') insert = '**' + sel + '**';
+            else if (tool === 'italic') insert = '*' + sel + '*';
+            else if (tool === 'code') insert = '\n```python\n' + sel + '\n```\n';
+            else if (tool === 'list') insert = '\n- ' + sel;
+            else if (tool === 'quote') insert = '\n> ' + sel;
+            inp.value = inp.value.slice(0, start) + insert + inp.value.slice(end);
+            document.getElementById('lessonMdPreview').innerHTML = renderMarkdownToHtml(inp.value);
+            inp.focus();
+          });
+        });
+
+        document.getElementById('cancelLessonEditBtn').addEventListener('click', function () {
+          document.getElementById('lessonEditorPane').classList.add('hidden');
+          document.getElementById('lessonReaderPane').classList.remove('hidden');
+        });
+
+        document.getElementById('saveLessonEditBtn').addEventListener('click', async function () {
+          if (!isAdmin(currentUser) || !activeLessonId) return;
+          const newMd = document.getElementById('lessonMdInput').value;
+          const map = getLessonContentsMap();
+          map[activeLessonId] = newMd;
+          safeSetStorage('edupath_lesson_contents_v1', map);
+          await pushLessonContentsToCloud(map);
+          document.getElementById('lessonEditorPane').classList.add('hidden');
+          document.getElementById('lessonReaderPane').classList.remove('hidden');
+          document.getElementById('lessonRenderedBody').innerHTML = renderMarkdownToHtml(newMd);
+          showToast('Đã lưu nội dung bài học và đồng bộ lên Cloud!');
+        });
+
+        document.querySelectorAll('[data-rm-filter]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            rmDifficultyFilter = btn.getAttribute('data-rm-filter');
+            document.querySelectorAll('.rm-filter-btn').forEach(function (b) {
+              b.className = 'rm-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition';
+            });
+            btn.className = 'rm-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 text-white transition';
+            renderPythonRoadmap();
+          });
+        });
+
+        document.getElementById('rmHideDoneToggle').addEventListener('change', function () {
+          rmHideDone = this.checked;
+          renderPythonRoadmap();
+        });
+
+        renderPythonRoadmap();
+
         refreshCloudSyncUi();
         pullUsersFromCloudOrStatic();
         renderAll();
+        switchView('roadmap');
       }
 
       if (document.readyState === 'loading') {

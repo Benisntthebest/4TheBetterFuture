@@ -34,12 +34,17 @@
 
       <!-- Navigation Tabs -->
       <nav class="flex items-center gap-1 sm:gap-2">
-        <button id="navLibraryBtn" type="button" class="px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white">
+        <button id="navRoadmapLibraryBtn" type="button" class="px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white">
           <svg class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-          <span>Thư viện</span>
+          <span>Library</span>
         </button>
 
-        <button id="navParentBtn" type="button" class="px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+        <button id="navLibraryBtn" type="button" class="px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
+          <svg class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span>Study Minigame</span>
+        </button>
+
+        <button id="navParentBtn" type="button" class="hidden px-3 py-2 rounded-lg text-sm font-medium transition flex items-center gap-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">
           <svg class="w-4 h-4 text-slate-600 dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
           <span class="hidden sm:inline">Tài khoản &amp; Phụ huynh</span>
           <span class="sm:hidden">Phụ huynh</span>
@@ -88,7 +93,7 @@
         <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-900">
-              Thư viện Trò chơi Học tập
+              Study Minigame — Trò chơi Học tập
             </span>
             <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-2">
               Học Tư duy Logic qua Trò chơi
@@ -553,6 +558,141 @@
         </div>
       </div>
 
+    </section>
+
+    <!-- VIEW 1B: LIBRARY (PYTHON ROADMAP - VNOI TEMPLATE, DIFFICULTY <= 2) -->
+    <section id="viewRoadmapLibrary" class="hidden fade-in space-y-6">
+      <div id="roadmapListContainer" class="space-y-6">
+      <!-- Featured Course Card: Python cơ bản (Lớp 6-9) -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-4">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div class="space-y-1.5">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-900">
+                Library • Lộ trình Tự học
+              </span>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-900">
+                Độ khó tối đa: 2 / 5 (Theo mẫu VNOI)
+              </span>
+            </div>
+            <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+              <span>🐍</span>
+              <span>Python cơ bản (Lớp 6-9)</span>
+            </h1>
+            <p class="text-sm text-slate-600 dark:text-slate-300 max-w-3xl leading-relaxed">
+              <strong>Python cơ bản (Lớp 6-9)</strong> — Lộ trình làm quen lập trình Python từ biến, vòng lặp, danh sách, xâu ký tự đến các cấu trúc dữ liệu nền tảng (Stack, Queue/Deque, Prefix Sum, Heap) ở mức độ cơ bản (Độ khó 1–2), phù hợp cho học sinh THCS rèn tư duy thuật toán.
+            </p>
+          </div>
+
+          <div class="shrink-0 bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 rounded-2xl p-4 min-w-[210px]">
+            <div class="flex items-center justify-between text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1.5">
+              <span>Tiến độ hoàn thành</span>
+              <span id="roadmapProgressCount" class="font-extrabold text-indigo-600 dark:text-indigo-400">0 / 0</span>
+            </div>
+            <div class="w-full h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+              <div id="roadmapProgressBar" class="h-full bg-indigo-600 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1.5">Bấm vào vòng tròn bên trái để đánh dấu đã học</p>
+          </div>
+        </div>
+
+        <!-- Toolbar: Filter Difficulty + Toggle Hide Completed -->
+        <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-2">
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button type="button" data-rm-filter="all" class="rm-filter-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 text-white transition">Tất cả</button>
+            <button type="button" data-rm-filter="1" class="rm-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition">Độ khó 1 (●○○○○)</button>
+            <button type="button" data-rm-filter="2" class="rm-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 transition">Độ khó 2 (●●○○○)</button>
+          </div>
+          <label class="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 dark:text-slate-300 cursor-pointer select-none">
+            <input id="rmHideDoneToggle" type="checkbox" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+            <span>Ẩn bài đã hoàn thành</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- VNOI-Style Roadmap Chapters Container -->
+      <div id="pythonRoadmapChapters" class="space-y-4">
+        <!-- Rendered by JS -->
+      </div>
+      </div>
+
+      <!-- DEDICATED LESSON PAGE + HACKMD SPLIT EDITOR (ADMIN) -->
+      <div id="roadmapLessonView" class="hidden space-y-5">
+        <!-- Top Lesson Bar -->
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 sm:p-5 shadow-sm flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <button id="backToRoadmapBtn" type="button" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+              ← Quay lại Lộ trình
+            </button>
+            <div>
+              <div class="flex items-center gap-2">
+                <span id="lessonChapterBadge" class="text-[11px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400"></span>
+                <span id="lessonDiffDots"></span>
+              </div>
+              <h2 id="lessonPageTitle" class="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white leading-tight mt-0.5"></h2>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="lessonToggleDoneBtn" type="button" class="px-3.5 py-2 rounded-xl text-xs font-bold border transition">
+              ○ Đánh dấu Hoàn thành
+            </button>
+            <button id="lessonEditAdminBtn" type="button" class="hidden px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-slate-950 transition shadow-xs">
+              ✏️ Chỉnh sửa (Admin)
+            </button>
+          </div>
+        </div>
+
+        <!-- Reader Mode -->
+        <div id="lessonReaderPane" class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 sm:p-8 shadow-sm space-y-6">
+          <article id="lessonRenderedBody" class="space-y-4 text-sm sm:text-base text-slate-700 dark:text-slate-200 leading-relaxed"></article>
+
+          <div class="pt-5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
+            <button id="lessonPrevBtn" type="button" class="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+              ← Bài trước
+            </button>
+            <button id="lessonNextBtn" type="button" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition">
+              Bài tiếp theo →
+            </button>
+          </div>
+        </div>
+
+        <!-- HackMD-style Split Editor (Admin Only) -->
+        <div id="lessonEditorPane" class="hidden bg-white dark:bg-slate-900 rounded-2xl border-2 border-amber-400 dark:border-amber-600 overflow-hidden shadow-md">
+          <!-- Formatting Toolbar (Word/Docs style shortcuts + Save/Cancel) -->
+          <div class="px-4 py-2.5 bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-wrap items-center gap-1">
+              <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 mr-1">Công cụ:</span>
+              <button type="button" data-md-tool="h2" class="px-2.5 py-1 rounded-md bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-xs font-bold hover:bg-slate-100">H2</button>
+              <button type="button" data-md-tool="bold" class="px-2.5 py-1 rounded-md bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-xs font-bold hover:bg-slate-100">B</button>
+              <button type="button" data-md-tool="italic" class="px-2.5 py-1 rounded-md bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-xs italic font-serif hover:bg-slate-100">I</button>
+              <button type="button" data-md-tool="code" class="px-2.5 py-1 rounded-md bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-xs font-mono hover:bg-slate-100">{ Code }</button>
+              <button type="button" data-md-tool="list" class="px-2.5 py-1 rounded-md bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-xs font-semibold hover:bg-slate-100">• Danh sách</button>
+              <button type="button" data-md-tool="quote" class="px-2.5 py-1 rounded-md bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-xs font-semibold hover:bg-slate-100">❝ Ghi chú</button>
+            </div>
+            <div class="flex items-center gap-2">
+              <button id="cancelLessonEditBtn" type="button" class="px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">
+                Hủy
+              </button>
+              <button id="saveLessonEditBtn" type="button" class="px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs">
+                💾 Lưu bài học
+              </button>
+            </div>
+          </div>
+
+          <!-- Split View: Left Markdown, Right Live Preview -->
+          <div class="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-200 dark:divide-slate-700">
+            <div class="p-4 flex flex-col">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Soạn thảo (Markdown / HackMD)</span>
+              <textarea id="lessonMdInput" rows="16" class="w-full flex-1 font-mono text-xs sm:text-sm bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y"></textarea>
+            </div>
+            <div class="p-4 flex flex-col bg-slate-50/40 dark:bg-slate-900/40">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">Xem trước trực tiếp (Live Preview)</span>
+              <div id="lessonMdPreview" class="flex-1 overflow-y-auto max-h-[460px] space-y-3 text-sm text-slate-700 dark:text-slate-200 leading-relaxed p-1"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- VIEW 2: ACCOUNT & PARENT PROGRESS TRACKING GUI -->
